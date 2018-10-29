@@ -7,9 +7,11 @@
 #include <avr/io.h>
 #define F_CPU 16E6
 
-#include "AVR_TTC_scheduler.h"
-#include "main.h"
 
+#include "main.h"
+#include "AVR_TTC_scheduler.c"
+#include "init.h"
+#include "roluik.h"
 // Zet hier alles wat geïnitialiseerd moet worden.
 void setup(){
 	
