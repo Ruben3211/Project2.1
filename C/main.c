@@ -8,9 +8,9 @@
 #define F_CPU 16E6
 
 #include "AVR_TTC_scheduler.h"
+#include "main.h"
 
-
-// Zet gier alles wat geïnitialiseerd moet worden.
+// Zet hier alles wat geïnitialiseerd moet worden.
 void setup(){
 	
 	SCH_Init_T1(); // Schedular initialiseren 
@@ -28,6 +28,7 @@ int main(void)
 	
     while (1) 
     {
+		// zorg er voor dat hij de taken ook gaat dischpatchen 
 		SCH_Dispatch_Tasks();
     }
 }
