@@ -6,14 +6,19 @@
  */ 
 #include <avr/io.h>
 #define F_CPU 16E6
+#include <util/delay.h>
 
-
-#include "main.h"
+#include "commando.c"
 #include "AVR_TTC_scheduler.c"
-#include "init.h"
-#include "roluik.h"
+#include "init.c"
+#include "roluik.c"
+
 // Zet hier alles wat geïnitialiseerd moet worden.
-void setup(){
+void setup(){	
+	
+	setPortB();
+	setSerial();
+	setRoluikStatus();
 	
 	SCH_Init_T1(); // Schedular initialiseren 
 }
@@ -21,9 +26,10 @@ void setup(){
 int main(void)
 {
 	setup(); // roep de setup functie aan
+	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-
+	SCH_Add_Task(cont_commando, 0, 10);
 
 	SCH_Start(); // Enable Schedular
 	
