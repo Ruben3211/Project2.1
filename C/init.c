@@ -17,7 +17,7 @@ void setPortB(){
 	
 }
 
-void setPortD(){
+void set_PortD(){
 	
 	
 }
