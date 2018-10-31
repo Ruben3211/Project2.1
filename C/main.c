@@ -7,11 +7,145 @@
 #include <avr/io.h>
 #define F_CPU 16E6
 #include <util/delay.h>
-
-#include "commando.c"
+#include  <avr/sfr_defs.h>
+#define UBBRVAL 51;
 #include "AVR_TTC_scheduler.c"
-#include "init.c"
-#include "roluik.c"
+uint8_t mode;
+//Commando.c
+uint8_t command;
+
+
+
+void cont_commando(){
+	command = ontvang();
+	
+	switch(command)
+	{
+		// open het luik
+		case '1':
+		open_rolluik();
+		return;
+		// sluit luik
+		case '2':
+		sluit_rolluik();
+		return;
+	}
+}
+
+// sensor.c
+
+
+
+
+// serial.c
+void stuur(uint8_t data){
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	UDR0 = data;
+	
+}
+
+void ontvang(){
+	loop_until_bit_is_set(UCSR0A, RXC0);
+	return UDR0;
+}
+
+// rolluik.c
+int count = 0;
+int status_roluik;
+int roluik_bezig;
+
+void setRoluikStatus(){
+	roluik_bezig = 0; // als de roluik niet bezig is moet deze nul zijn anders 1
+	status_roluik = 0; // nul is niet bezig
+	PORTB |= _BV(PB0); // zet de groene led aan.
+}
+
+// open rolluik
+void open_rolluik(){
+	if(status_roluik == 1 & roluik_bezig == 0){
+		count = 0;
+		roluik_bezig = 1;
+		PORTB &= ~_BV(PB2); // zet de rode led uit
+		while(count < 3){
+			PORTB |= _BV(PB1);
+			_delay_ms(500);
+			PORTB &= ~_BV(PB1);
+			_delay_ms(500);
+			count++;
+		}
+		PORTB |= _BV(PB0); // zet de groene led aan
+		roluik_bezig = 0;
+		status_roluik = 0;
+	}
+	else if(status_roluik == 1){
+		// rol luik is al omhoog
+	}
+	else if(roluik_bezig == 1) {
+		// hier moet nog iets komen als het roluik al bezig is
+	}
+	
+}
+
+// sluit rolluik
+void sluit_rolluik(){
+	if(status_roluik == 0 & roluik_bezig == 0){
+		count = 0;
+		roluik_bezig = 1;
+		PORTB &= ~_BV(PB0); // zet de groen led uit
+		while(count < 3){
+			PORTB |= _BV(PB1);
+			_delay_ms(500);
+			PORTB &= ~_BV(PB1);
+			_delay_ms(500);
+			
+			count++;
+		}
+		PORTB |= _BV(PB2); // zet de groene rode aan
+		roluik_bezig = 0;
+		status_roluik = 1;
+	}
+	else if(status_roluik == 1){
+		// rol luik is al omhoog
+	}
+	else if(roluik_bezig == 1) {
+		// hier moet nog iets komen als het roluik al bezig is
+	}
+	
+}
+
+
+
+// init.c
+void set_portC(){
+	
+	
+}
+
+void setPortB(){
+	DDRB |= _BV(DDB0); // pin 0 van port b als output voor de groene led.
+	DDRB |= _BV(DDB1); // pin 1 van port b als outpt voor de gele led.
+	DDRB |= _BV(DDB2); // pin 2 van port b als output voor de rode led.
+	
+}
+
+void set_PortD(){
+	
+	
+}
+
+void setSerial(){
+	// Set baudrate 19200
+	UBRR0H = 0;
+	UBRR0L = UBBRVAL;
+	// disable U2X mode
+	UCSR0A = 0;
+	// enable transmitter
+	UCSR0B = _BV(TXEN0) | _BV(RXEN0);
+	// set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
+	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
+}
+
+
 
 // Zet hier alles wat geïnitialiseerd moet worden.
 void setup(){	
@@ -29,7 +163,7 @@ int main(void)
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-	SCH_Add_Task(cont_commando, 0, 10);
+	SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
 
 	SCH_Start(); // Enable Schedular
 	
