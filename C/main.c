@@ -33,8 +33,54 @@ void cont_commando(){
 }
 
 // sensor.c
+float analoge_waarde;
 
+// Deze switch case is er om voor de juiste sensor te kiezen
+// zo kan je op alle embedded systems het zelfde zetten zonder iets aan te passen
 
+float sensor_lees(int sensor){
+	
+	switch(sensor)
+	{
+		
+		case 0: // tempratuur sensor
+		ADMUX &= ~_BV(MUX0); // Set channel point to port 0
+		ADCSRA |= _BV(ADSC); // Start adc measurement
+		loop_until_bit_is_clear(ADCSRA, ADSC); // proceed when done
+
+		analoge_waarde = (((float)ADCW * 5000 / 1024) - 500) / 10;
+		return analoge_waarde;
+		break;	
+		
+		case 1: // lichtsensor
+		ADMUX |= _BV(MUX0);
+		ADCSRA |= _BV(ADSC);
+		loop_until_bit_is_clear(ADCSRA, ADSC);
+		
+		// Return lightvalue between 0 - 100
+		analoge_waarde = (float)ADCW / 1024 * 100;
+		return analoge_waarde;
+		break;
+		
+		// afstand sensor
+		case 2:
+			PORTD |= _BV(PD3);
+			_delay_us(10);
+			PORTD &= ~_BV(PD3);
+
+			loop_until_bit_is_set(PIND, PD4);
+			TCNT1 = 0;
+			//PORTB |= _BV(PB3);
+			loop_until_bit_is_clear(PIND, PD4);
+			//PORTB &= ~_BV(PB3);
+			uint16_t count = TCNT1;
+			//transmit(count);
+			float distance = ((float)count / 4);
+
+			return distance;
+			break;
+	}
+}
 
 
 // serial.c
@@ -50,7 +96,7 @@ void ontvang(){
 }
 
 // rolluik.c
-int count = 0;
+//int count = 0;
 int status_roluik;
 int roluik_bezig;
 
@@ -63,15 +109,17 @@ void setRoluikStatus(){
 // open rolluik
 void open_rolluik(){
 	if(status_roluik == 1 & roluik_bezig == 0){
-		count = 0;
+		//count = 0;
 		roluik_bezig = 1;
 		PORTB &= ~_BV(PB2); // zet de rode led uit
-		while(count < 3){
+	//	while(count < 3)
+		while(sensor_lees(2) < 20)
+	{
 			PORTB |= _BV(PB1);
 			_delay_ms(500);
 			PORTB &= ~_BV(PB1);
 			_delay_ms(500);
-			count++;
+			//count++;
 		}
 		PORTB |= _BV(PB0); // zet de groene led aan
 		roluik_bezig = 0;
@@ -89,16 +137,18 @@ void open_rolluik(){
 // sluit rolluik
 void sluit_rolluik(){
 	if(status_roluik == 0 & roluik_bezig == 0){
-		count = 0;
+		//count = 0;
 		roluik_bezig = 1;
 		PORTB &= ~_BV(PB0); // zet de groen led uit
-		while(count < 3){
+		//while(count < 3)
+		while(sensor_lees(2) > 20)
+		{
 			PORTB |= _BV(PB1);
 			_delay_ms(500);
 			PORTB &= ~_BV(PB1);
 			_delay_ms(500);
 			
-			count++;
+			//count++;
 		}
 		PORTB |= _BV(PB2); // zet de groene rode aan
 		roluik_bezig = 0;
@@ -118,10 +168,14 @@ void sluit_rolluik(){
 // init.c
 void set_portC(){
 	
+	ADCSRA |= _BV(ADPS2) | _BV(ADPS1) | _BV(ADPS0); // 128 prescaler
+	ADMUX |= _BV(REFS0);
+	ADMUX &= ~_BV(REFS1); // 5v mode
+	ADCSRA |= _BV(ADEN); // Turn on
 	
 }
 
-void setPortB(){
+void set_PortB(){
 	DDRB |= _BV(DDB0); // pin 0 van port b als output voor de groene led.
 	DDRB |= _BV(DDB1); // pin 1 van port b als outpt voor de gele led.
 	DDRB |= _BV(DDB2); // pin 2 van port b als output voor de rode led.
@@ -130,7 +184,8 @@ void setPortB(){
 
 void set_PortD(){
 	
-	
+	DDRD |= _BV(PD3); // Pin 3 Trigger Output
+	DDRD &= ~_BV(PD4); // Pin 4 Echo Input
 }
 
 void setSerial(){
@@ -145,12 +200,23 @@ void setSerial(){
 	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
 }
 
+void lamp()
+{
+	if(sensor_lees(1) < 30)
+	{
+		sluit_rolluik();
+	} else if(sensor_lees(1) > 29){
+		open_rolluik();
+	}
+}
 
 
 // Zet hier alles wat geïnitialiseerd moet worden.
 void setup(){	
 	
-	setPortB();
+	set_PortB();
+	set_portC();
+	set_PortD();
 	setSerial();
 	setRoluikStatus();
 	
@@ -163,13 +229,13 @@ int main(void)
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-	SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
-
+	SCH_Add_Task(lamp,0,10);
+	//SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
 	SCH_Start(); // Enable Schedular
-	
 	
     while (1) 
     {
+	
 		// zorg er voor dat hij de taken ook gaat dischpatchen 
 		SCH_Dispatch_Tasks();
     }
