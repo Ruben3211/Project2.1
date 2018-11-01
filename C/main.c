@@ -200,12 +200,20 @@ void setSerial(){
 	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
 }
 
+// timer
+void timer()
+{
+	TCCR1B |= _BV(CS10);
+}
+
+// lampjes
+
 void lamp()
 {
-	if(sensor_lees(1) < 30)
+	if(sensor_lees(1) < 20)
 	{
 		sluit_rolluik();
-	} else if(sensor_lees(1) > 29){
+	} else if(sensor_lees(1) > 19){
 		open_rolluik();
 	}
 }
