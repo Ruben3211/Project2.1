@@ -14,7 +14,7 @@ class centrale():
 
     # Knop actie
     def clickMe(self):
-        self.action.configure(text='Hello ' + self.name.get())
+        self.labelVar.set(self.name.get())  # Automatically updates the label's text
 
     # Sluit de GUI
     def _quit(self):
@@ -40,8 +40,8 @@ class centrale():
         self.container = ttk.LabelFrame(tab1, text=' Temperatuursensor ')
         self.container.grid(column=0, row=0, padx=8, pady=4)
 
-        # Verander het label
-        ttk.Label(self.container, text="Geef een waarde:").grid(column=0, row=0, sticky='W')
+        # Voeg een label toe
+        labeltje1 = ttk.Label(self.container, text="Geef een waarde:").grid(column=0, row=0, sticky='W')
 
         # Maak een invulveld widget
         self.name = tk.StringVar()
@@ -52,7 +52,10 @@ class centrale():
         self.action = ttk.Button(self.container, text="Klik mij!", command=self.clickMe)
         self.action.grid(column=2, row=1)
 
-        ttk.Label(self.container, text="Test label").grid(column=1, row=1)
+        # Voeg een tweede label toe
+        self.labelVar = tk.StringVar()
+        self.labelVar.set("Test label")
+        self.labeltje2 = ttk.Label(self.container, textvariable=self.labelVar).grid(column=1, row=1)
 
         # Tab Control 2  -----------------------------------------
         # Creeer een container frame waar alle andere widgets inkomen -- Tab2
@@ -70,7 +73,6 @@ class centrale():
         # Creeer wat ruimte om de labels
         for child in labelsFrame.winfo_children():
             child.grid_configure(padx=18)
-
 
         # Creeer de menu bar
         menuBar = Menu(tab1)
