@@ -48,7 +48,7 @@ float sensor_lees(int sensor){
 		ADCSRA |= _BV(ADSC); // Start adc measurement
 		loop_until_bit_is_clear(ADCSRA, ADSC); // proceed when done
 
-		analoge_waarde = (((float)ADCW /1024) * 5) - 0.5 )* 100 );
+		analoge_waarde = (((((double)ADCW /1024) * 5) - 0.5 )* 100);
 		return analoge_waarde;
 		break;	
 		
@@ -102,8 +102,8 @@ int roluik_bezig;
 
 void setRoluikStatus(){
 	roluik_bezig = 0; // als de roluik niet bezig is moet deze nul zijn anders 1
-	status_roluik = 0; // nul is niet bezig
-	PORTB |= _BV(PB0); // zet de groene led aan.
+	status_roluik = 1; // nul is niet bezig
+	PORTB |= _BV(PB2); // zet de groene led aan.
 }
 
 // open rolluik
@@ -150,7 +150,7 @@ void sluit_rolluik(){
 			
 			//count++;
 		}
-		PORTB |= _BV(PB2); // zet de groene rode aan
+		PORTB |= _BV(PB2); // zet de rode aan
 		roluik_bezig = 0;
 		status_roluik = 1;
 	}
@@ -208,16 +208,29 @@ void timer()
 
 // lampjes
 
-void lamp()
+void lamp_temp()
 {
-	if(sensor_lees(1) < 20)
+	if(sensor_lees(0) <=360.00)
 	{
+		// rood
 		sluit_rolluik();
-	} else if(sensor_lees(1) > 19){
+		// groen
+	} else if(sensor_lees(0) > 360.00){
 		open_rolluik();
 	}
 }
 
+void lamp_licht(){
+	
+		if(sensor_lees(1) <=29)
+		{
+			sluit_rolluik();
+			} else if(sensor_lees(0) > 29){
+			open_rolluik();
+		}
+	
+	
+}
 
 // Zet hier alles wat geïnitialiseerd moet worden.
 void setup(){	
@@ -237,7 +250,7 @@ int main(void)
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-	SCH_Add_Task(lamp,0,10);
+	SCH_Add_Task(lamp_licht,0,10);
 	//SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
 	SCH_Start(); // Enable Schedular
 	
