@@ -48,7 +48,7 @@ float sensor_lees(int sensor){
 		ADCSRA |= _BV(ADSC); // Start adc measurement
 		loop_until_bit_is_clear(ADCSRA, ADSC); // proceed when done
 
-		analoge_waarde = (((float)ADCW * 5000 / 1024) - 500) / 10;
+		analoge_waarde = (((float)ADCW /1024) * 5) - 0.5 )* 100 );
 		return analoge_waarde;
 		break;	
 		
