@@ -1,4 +1,5 @@
 import serial
+import struct
 # class system:
 #     def __init__(self,name ,type):
 #         self.name
@@ -15,9 +16,13 @@ import serial
 #     def close_screen(self):
 
 
-ser = serial.Serial(port='COM3', baudrate=9600, bytesize=8, parity='n', stopbits=2 ,xonxoff=0)
+ser = serial.Serial(port='COM3', baudrate=9600  ,stopbits=2, xonxoff=False)
 print(ser)
 while True:
     nummer = int(input("voer hier het commando in"))
-    ser.write(nummer)
+    if nummer == 1:
+        ser.write(struct.pack('>B', 1))
+
+    elif nummer == 2:
+        ser.write(struct.pack('>B', 2))
 
