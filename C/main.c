@@ -8,16 +8,17 @@
 #define F_CPU 16E6
 #include <util/delay.h>
 #include  <avr/sfr_defs.h>
-#define UBBRVAL 51;
+#define FOSC 16000000 // Clock Speed
+#define BAUD 9600
+#define MYUBRR FOSC/16/BAUD-1
 #include "AVR_TTC_scheduler.c"
 uint8_t mode;
-//Commando.c
-uint8_t command;
+int command;
 
 
 
 void cont_commando(){
-	command = ontvang();
+	command = USART_Receive();
 	
 	switch(command)
 	{
@@ -84,14 +85,27 @@ float sensor_lees(int sensor){
 
 
 // serial.c
-void stuur(uint8_t data){
-	loop_until_bit_is_set(UCSR0A, UDRE0);
+void USART_Transmit( unsigned int data )
+{
+	/* Wait for empty transmit buffer */
+	while ( !( UCSR0A & (1<<UDRE0)) )
+	;
+	/* Put data into buffer, sends the data */
 	UDR0 = data;
-	
 }
 
-void ontvang(){
-	loop_until_bit_is_set(UCSR0A, RXC0);
+void USART_sendstring(char* stringptr){
+	while(*stringptr != 0x00){
+		USART_Transmit(*stringptr);
+		stringptr++;
+	}
+}
+
+unsigned int USART_Receive( void )
+{
+	/* Wait for data to be received */
+	while ( !(UCSR0A & (1<<RXC0)) );
+	/* Get and return received data from buffer */
 	return UDR0;
 }
 
@@ -188,16 +202,15 @@ void set_PortD(){
 	DDRD &= ~_BV(PD4); // Pin 4 Echo Input
 }
 
-void setSerial(){
-	// Set baudrate 19200
-	UBRR0H = 0;
-	UBRR0L = UBBRVAL;
-	// disable U2X mode
-	UCSR0A = 0;
-	// enable transmitter
-	UCSR0B = _BV(TXEN0) | _BV(RXEN0);
-	// set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
-	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
+void USART_Init( unsigned int ubrr)
+{
+	/*Set baud rate */
+	UBRR0H = (unsigned char)(ubrr>>8);
+	UBRR0L = (unsigned char)ubrr;
+	/* Enable receiver and transmitter */
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+	/* Set frame format: 8data, 2stop bit */
+	UCSR0C = (1<<USBS0)|(3<<UCSZ00);
 }
 
 // timer
@@ -238,7 +251,7 @@ void setup(){
 	set_PortB();
 	set_portC();
 	set_PortD();
-	setSerial();
+	USART_Init(MYUBRR);
 	setRoluikStatus();
 	
 	SCH_Init_T1(); // Schedular initialiseren 
@@ -250,8 +263,8 @@ int main(void)
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-	SCH_Add_Task(lamp_licht,0,10);
-	//SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
+	//SCH_Add_Task(lamp_licht,0,10);
+	SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
 	SCH_Start(); // Enable Schedular
 	
     while (1) 
