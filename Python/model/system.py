@@ -23,7 +23,6 @@ class system:
         nummer = self.ser.readline(2)
         return nummer
 
-
 unit = system('test','2','com3')
 print(unit)
 while True:
