@@ -15,10 +15,10 @@ class DynamicUpdate():
             self.figure, self.ax = plt.subplots()
             self.lines, = self.ax.plot([],[], 'b-') # Grote van het venster en het soort grafiek b- voor lijn
 
-        # Autoscaler voor de punten die hij nog niet heeft doorgekregen
-        self.ax.set_autoscaley_on(True) # Autoscale is waar
-        self.ax.set_xlim(self.min_x, self.max_x) # Minimale en maximale waarden van x-as worden geset
-        self.ax.grid() # Hiermee zet je een standaard raster voor de grafiek
+            # Autoscaler voor de punten die hij nog niet heeft doorgekregen
+            self.ax.set_autoscaley_on(True) # Autoscale is waar
+            self.ax.set_xlim(self.min_x, self.max_x) # Minimale en maximale waarden van x-as worden geset
+            self.ax.grid() # Hiermee zet je een standaard raster voor de grafiek
 
     def bezig(self, xdata, ydata):
         # Update de grafiek met de nieuwe en oude gegevens
