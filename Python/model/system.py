@@ -23,6 +23,11 @@ class system:
         nummer = self.ser.readline(2)
         return nummer
 
+    def bit_to_int(self, bit):
+        self.bit = bit
+        nummer = int(self.bit)
+        return nummer
+
 unit = system('test','2','com3')
 print(unit)
 while True:
@@ -35,4 +40,4 @@ while True:
         unit.close_screen()
 
     elif nummer == 3:
-        print(unit.ontvang())
+        print(unit.bit_to_int(unit.ontvang()))
