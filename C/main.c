@@ -23,11 +23,11 @@ void cont_commando(){
 	switch(command)
 	{
 		// open het luik
-		case '1':
+		case 0x01:
 		open_rolluik();
 		return;
 		// sluit luik
-		case '2':
+		case 0x02:
 		sluit_rolluik();
 		return;
 	}
@@ -101,7 +101,7 @@ void USART_sendstring(char* stringptr){
 	}
 }
 
-unsigned int USART_Receive( void )
+int USART_Receive()
 {
 	/* Wait for data to be received */
 	while ( !(UCSR0A & (1<<RXC0)) );
