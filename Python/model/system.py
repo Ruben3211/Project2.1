@@ -23,10 +23,10 @@ class system:
         nummer = self.ser.readline(2)
         return nummer
 
-unit = system('test','2','com3')
+unit = system('test','2','com5')
 print(unit)
 while True:
-
+    unit.ontvang()
     nummer = int(input("voer hier het commando in"))
     if nummer == 1:
         unit.open_screen()
