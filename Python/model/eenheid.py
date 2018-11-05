@@ -3,10 +3,9 @@ import struct
 
 
 class eenheid:
-    def __init__(self, naam ,type, poort):
+    def __init__(self, naam, type, poort):
         """
         initialiseren van all klas variabelen
-
         :param id: Uniek id voor een eenheid
         :param naam: naam van de eenheid
         :param type: type van de eenheid
@@ -38,18 +37,13 @@ class eenheid:
         nummer = self.ser.readline(2)
         return nummer
 
-unit = eenheid('test','2','com5')
-print(unit)
-while True:
-    unit.ontvang()
-    nummer = int(input("voer hier het commando in"))
     def bit_to_int(self, ont):
         self.bit = ont
         nummer = int(self.bit)
         return nummer
 
 
-eenheid = eenheid('test','2','com3')
+eenheid = eenheid('test', '2', 'com3')
 print(eenheid)
 while True:
 
