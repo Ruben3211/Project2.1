@@ -39,11 +39,6 @@ class eenheid:
         nummer = self.ser.readline(2)
         return nummer
 
-unit = eenheid('test','2','com5')
-print(unit)
-while True:
-    unit.ontvang()
-    nummer = int(input("voer hier het commando in"))
     def bit_to_int(self, ont):
         self.bit = ont
         nummer = int(self.bit)
