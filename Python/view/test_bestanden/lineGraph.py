@@ -1,13 +1,16 @@
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import random
 import time
-plt.ion()
+
 
 
 class DynamicUpdate():
     # Begin afstand van de grafiek
     min_x = 0
     max_x = 60
+    plt.ion()
 
     # Tekent de grafiek
     def setup(self):
@@ -19,6 +22,7 @@ class DynamicUpdate():
             self.ax.set_autoscaley_on(True) # Autoscale is waar
             self.ax.set_xlim(self.min_x, self.max_x) # Minimale en maximale waarden van x-as worden geset
             self.ax.grid() # Hiermee zet je een standaard raster voor de grafiek
+
 
     def bezig(self, xdata, ydata):
         # Update de grafiek met de nieuwe en oude gegevens
@@ -73,7 +77,7 @@ class DynamicUpdate():
                 self.max_x += 1
 
             # Pauze van een seconde
-            time.sleep(1)
+            time.sleep(0.25)
             max_b += 1
             x += 1
 
