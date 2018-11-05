@@ -1,15 +1,35 @@
 import serial
 import struct
 
-class system:
-    def __init__(self, naam ,type, port):
+
+class eenheid:
+    def __init__(self, naam ,type, poort):
+        """
+        initialiseren van all klas variabelen
+
+        :param id: Uniek id voor een eenheid
+        :param naam: naam van de eenheid
+        :param type: type van de eenheid
+        :param poort: de usb poort waarmee de eenheid verbing
+        """
+
         self.naam = naam
         self.type = type
-        self.port = port
+        self.poort = poort
         self.ser = self.connect()
 
     def connect(self):
-        ser = serial.Serial(port=self.port, baudrate=9600, bytesize=8, stopbits=2, xonxoff=False)
+        """
+
+
+        :return:
+        """
+        ser = serial.Serial(port=self.poort,
+                            baudrate=9600,
+                            bytesize=8,
+                            stopbits=2,
+                            xonxoff=False)
+
         print('verbonden met', self.naam)
         return ser
 
@@ -23,21 +43,23 @@ class system:
         nummer = self.ser.readline(2)
         return nummer
 
-    def bit_to_int(self, bit):
-        self.bit = bit
+    def bit_to_int(self, ont):
+        self.bit = ont
         nummer = int(self.bit)
         return nummer
 
-unit = system('test','2','com3')
-print(unit)
+
+eenheid = eenheid('test','2','com3')
+print(eenheid)
 while True:
 
-    nummer = int(input("voer hier het commando in"))
+    eenheid.ontvang()
+    nummer = 3
     if nummer == 1:
-        unit.open_screen()
+        eenheid.open_screen()
 
     elif nummer == 2:
-        unit.close_screen()
+        eenheid.close_screen()
 
     elif nummer == 3:
-        print(unit.bit_to_int(unit.ontvang()))
+        print(eenheid.bit_to_int(eenheid.ontvang()))
