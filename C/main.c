@@ -5,16 +5,26 @@
  * Author :Ruben,Yaimon,Casper en Kevin
  */ 
 #include <avr/io.h>
-#define F_CPU 16E6
 #include <util/delay.h>
+#include <stdlib.h>
 #include  <avr/sfr_defs.h>
+#define F_CPU 16E6
 #define FOSC 16000000 // Clock Speed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 #include "AVR_TTC_scheduler.c"
-uint8_t mode;
+uint8_t modes;
 int command;
 
+//settings
+void verander_mode(){
+	if (modes == 0){
+	modes = 1;
+	}
+	else if(modes == 1){
+		modes = 1;
+	}
+}
 
 
 void cont_commando(){
@@ -30,6 +40,10 @@ void cont_commando(){
 		case 0x02:
 		sluit_rolluik();
 		return;
+		//
+		case 0x03:
+		verander_mode();
+		
 	}
 }
 
@@ -264,14 +278,22 @@ int main(void)
 // Zet hier onder alle taken die van af de start al moeten draaien
 
 	//SCH_Add_Task(lamp_licht,0,10);
-	SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
-	SCH_Start(); // Enable Schedular
-	
+	//SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
+	//SCH_Add_Task(send_data, 0, 500);
+	//SCH_Start(); // Enable Schedular
+	char buffer[5];
     while (1) 
     {
-	
+		uint8_t	licht = 20.00;
+		itoa(licht, buffer, 10);
+		USART_sendstring(buffer);
+		_delay_ms(5000);
+		uint8_t licht = 27.00;
+		itoa(licht, buffer, 10);
+		USART_sendstring(buffer);
+		_delay_ms(5000);
 		// zorg er voor dat hij de taken ook gaat dischpatchen 
-		SCH_Dispatch_Tasks();
+		//SCH_Dispatch_Tasks();
     }
 }
 
