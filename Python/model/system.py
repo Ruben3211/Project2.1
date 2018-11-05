@@ -40,6 +40,7 @@ class eenheid:
         self.ser.write(struct.pack('>B', 2))
 
     def ontvang(self):
+        
         nummer = self.ser.readline(2)
         return nummer
 
