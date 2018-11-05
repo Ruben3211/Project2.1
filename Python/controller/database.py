@@ -1,7 +1,6 @@
 import mysql
 from mysql import connector
 
-#
 class DB:
     def __init__(self):
         """
