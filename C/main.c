@@ -13,8 +13,17 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 #include "AVR_TTC_scheduler.c"
+
 uint8_t modes;
+uint8_t sensor_type;
+uint8_t meet_freq;
+uint8_t grens_waarde;
+uint8_t deel_freq;
+
 int command;
+//int count = 0;
+int status_roluik;
+int roluik_bezig;
 
 //settings
 void verander_mode(){
@@ -26,24 +35,41 @@ void verander_mode(){
 	}
 }
 
-
 void cont_commando(){
 	command = USART_Receive();
-	
+	if(USART_Receive() != 0xFF){
+	    return;
+	}
 	switch(command)
 	{
-		// open het luik
+		// Open het luik
 		case 0x01:
 		open_rolluik();
 		return;
-		// sluit luik
+		// Sluit luik
 		case 0x02:
 		sluit_rolluik();
 		return;
-		//
+		// Verander de mode van automatisch naar handmatig en andersom
 		case 0x03:
 		verander_mode();
-		
+		return;
+		// Ontvangt het sensor type
+		case 0x04:
+		sensor_type = USART_Receive();
+		return;
+		// Ontvangt de meet frequentie
+		case 0x05:
+		meet_freq = USART_Receive();
+		return;
+		// Ontvangt de grens waarde
+		case 0x06:
+		grens_waarde = USART_Receive();
+		return;
+		// Ontvangt de deel freq
+		case 0x07:
+		deel_freq = USART_Receive();
+		return;
 	}
 }
 
@@ -52,9 +78,7 @@ float analoge_waarde;
 
 // Deze switch case is er om voor de juiste sensor te kiezen
 // zo kan je op alle embedded systems het zelfde zetten zonder iets aan te passen
-
 float sensor_lees(int sensor){
-	
 	switch(sensor)
 	{
 		
@@ -108,6 +132,7 @@ void USART_Transmit( unsigned int data )
 	UDR0 = data;
 }
 
+// Verstuur een string naar de arduino
 void USART_sendstring(char* stringptr){
 	while(*stringptr != 0x00){
 		USART_Transmit(*stringptr);
@@ -115,6 +140,7 @@ void USART_sendstring(char* stringptr){
 	}
 }
 
+// Ontvang de waardes van de arduino
 int USART_Receive()
 {
 	/* Wait for data to be received */
@@ -123,11 +149,8 @@ int USART_Receive()
 	return UDR0;
 }
 
-// rolluik.c
-//int count = 0;
-int status_roluik;
-int roluik_bezig;
-
+//rolluik.c
+// zet de status van het roluik
 void setRoluikStatus(){
 	roluik_bezig = 0; // als de roluik niet bezig is moet deze nul zijn anders 1
 	status_roluik = 1; // nul is niet bezig
@@ -194,6 +217,7 @@ void sluit_rolluik(){
 
 
 // init.c
+// zet poort c
 void set_portC(){
 	
 	ADCSRA |= _BV(ADPS2) | _BV(ADPS1) | _BV(ADPS0); // 128 prescaler
@@ -203,6 +227,7 @@ void set_portC(){
 	
 }
 
+// Zet poort B
 void set_PortB(){
 	DDRB |= _BV(DDB0); // pin 0 van port b als output voor de groene led.
 	DDRB |= _BV(DDB1); // pin 1 van port b als outpt voor de gele led.
@@ -210,12 +235,14 @@ void set_PortB(){
 	
 }
 
+// Zet poort D
 void set_PortD(){
 	
 	DDRD |= _BV(PD3); // Pin 3 Trigger Output
 	DDRD &= ~_BV(PD4); // Pin 4 Echo Input
 }
 
+// Initialiseren van de USART
 void USART_Init( unsigned int ubrr)
 {
 	/*Set baud rate */
@@ -233,22 +260,21 @@ void timer()
 	TCCR1B |= _BV(CS10);
 }
 
-// lampjes
-
+// lampjes aansturen met de temperatuur sensor
 void lamp_temp()
 {
-	if(sensor_lees(0) <=360.00)
+	if(sensor_lees(0) <= 21)
 	{
 		// rood
 		sluit_rolluik();
 		// groen
-	} else if(sensor_lees(0) > 360.00){
+	} else if(sensor_lees(0) > 21){
 		open_rolluik();
 	}
 }
 
+// lampjes aansturen met de licht sensor
 void lamp_licht(){
-	
 		if(sensor_lees(1) <=29)
 		{
 			sluit_rolluik();
@@ -259,7 +285,7 @@ void lamp_licht(){
 	
 }
 
-// Zet hier alles wat geïnitialiseerd moet worden.
+// Zet hier alles wat geï¿½nitialiseerd moet worden.
 void setup(){	
 	
 	set_PortB();
@@ -284,14 +310,8 @@ int main(void)
 	char buffer[5];
     while (1) 
     {
-		uint8_t	licht = 20.00;
-		itoa(licht, buffer, 10);
-		USART_sendstring(buffer);
-		_delay_ms(5000);
-		uint8_t licht = 27.00;
-		itoa(licht, buffer, 10);
-		USART_sendstring(buffer);
-		_delay_ms(5000);
+		cont_commando();
+
 		// zorg er voor dat hij de taken ook gaat dischpatchen 
 		//SCH_Dispatch_Tasks();
     }
