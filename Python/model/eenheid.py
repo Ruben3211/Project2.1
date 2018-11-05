@@ -3,7 +3,7 @@ import struct
 
 
 class eenheid:
-    def __init__(self, naam, type, poort):
+    def __init__(self, id, naam, type, poort, luikwaarde, meet_freq, deel_freq, datum_toe, ):
         """
         initialiseren van all klas variabelen
         :param id: Uniek id voor een eenheid
@@ -43,8 +43,17 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
+    def verander_mode(self):
+        self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 3))
+    def stuur_Update_sens(self):
+        #stuur een nieuwe waarde voor wanneer het roluik omhoog en naar beneden moet gaan
 
-eenheid = eenheid('test', '2', 'com3')
+        self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 4))
+        
+
+eenheid = eenheid('test', '2', 'com5')
 print(eenheid)
 while True:
 
