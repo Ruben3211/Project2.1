@@ -70,7 +70,7 @@ void cont_commando(){
 		case 0x07:
 		deel_freq = USART_Receive();
 		return;
-		case '8':
+		case 0x08:
 		itoa(waarde, buffer, 10);
 		USART_sendstring(buffer);
 		return;
@@ -263,15 +263,22 @@ void timer()
 }
 
 // lampjes
-
+uint8_t tussen;
 void lees_waarde(){
 	if (sensor_type == 0){
-		waarde = sensor_lees(0);	
+		tussen = sensor_lees(0);	
+		if (tussen != waarde){
+			waarde = tussen;
+		}
 	}
 	else if( sensor_type == 1){
-	}
-		waarde = sensor_lees(1);
-	};
+	
+		tussen = sensor_lees(1);
+		if(tussen != waarde){
+			waarde = tussen;
+		}
+		}
+}
 
 
 // Zet hier alles wat geïnitialiseerd moet worden.
@@ -293,7 +300,7 @@ int main(void)
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-	SCH_Add_Task(lees_waarde, 0, 30000);
+	SCH_Add_Task(lees_waarde, 0, 3);
 	SCH_Add_Task(cont_commando, 0 ,20);
 	SCH_Start(); // Enable Schedular
 	

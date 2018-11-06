@@ -30,7 +30,7 @@ class eenheid:
                             baudrate=9600,
                             bytesize=8,
                             stopbits=2,
-                            xonxoff=False)
+                            xonxoff=True)
 
         print('verbonden met', self.naam)
         return ser
@@ -71,7 +71,8 @@ class eenheid:
     def krijg_sensor_waarde(self):
         self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 8))
-        self.waarde = self.bit_to_int(self.ser.readline(2))
+        interval = self.ser.readline(2)
+        self.sensor_waarde = self.bit_to_int(interval)
 
     def ontvang(self):
 
@@ -83,19 +84,20 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
-eenheid = eenheid(1, 'test', '0', 'com5')
+eenheid = eenheid(1, 'test', '0', 'com3')
 while True:
 
-    nummer = int(input("commando"))
-    if nummer == 1:
+    moi = int(input("commando"))
+    if moi == 1:
         eenheid.open_screen()
 
-    elif nummer == 2:
+    elif moi == 2:
         eenheid.close_screen()
 
-    elif nummer == 8:
+    elif moi == 8:
         eenheid.krijg_sensor_waarde()
-        print(eenheid.waarde)
 
-    elif nummer == 3:
+    elif moi == 3:
         eenheid.verander_mode()
+
+    print(eenheid.sensor_waarde)
