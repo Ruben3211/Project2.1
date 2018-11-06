@@ -11,7 +11,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import random
 from threading import Thread
 
-
 # =======================================================================================
 class Centrale:
     def __init__(self):
@@ -20,6 +19,7 @@ class Centrale:
         self.bovengrens = 20
         self.switch = True
         self.oprollen = True
+        self.frequentie = 10
 
         # Voeg een titel toe
         self.win.title("De Centrale")
@@ -31,30 +31,34 @@ class Centrale:
             self.bovengrens = self.grenswaardeVar.get()
         except:
             print('Ja.... da kan nie he')
-        self.labelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
+        self.grenslabelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
         # self.createThread()
 
     # Switch knop functionaliteit
     def switchFunc(self):
         if self.switch == True:
             self.switch = False
-            self.switchKnop.configure(text='Handmatig')
-            self.radio1.grid(column=0, row=5, sticky=tk.W, in_=self.container)
-            self.radio2.grid(column=0, row=6, sticky=tk.W, in_=self.container)
+            self.switchlabelVar.set('Deze besturingseenheid is ingesteld op handmatig')
+            self.switchKnop.configure(text='Verander de instelling naar automatisch')
+            self.oprolKnop.grid(column=0, row=5, sticky=tk.W, in_=self.knopContainer)
+            self.uitrolKnop.grid(column=0, row=6, sticky=tk.W, in_=self.knopContainer)
         else:
             self.switch = True
-            self.switchKnop.configure(text='Automatisch')
-            self.radio1.grid_forget()
-            self.radio2.grid_forget()
+            self.switchlabelVar.set('Deze besturingseenheid is ingesteld op automatisch')
+            self.switchKnop.configure(text='Verander de instelling naar handmatig')
+            self.oprolKnop.grid_forget()
+            self.uitrolKnop.grid_forget()
 
 
-    # Radiobuttons functionaliteit
-    def radioFunc(self):
-        radSel = self.radioVar.get()
-        if radSel == 0:
-            self.oprollen = True
-        elif radSel == 1:
-            self.oprollen = False
+    # Oprol knop functionaliteit
+    def oprollenFunc(self):
+        self.oprollen = True
+        self.oprollabelVar.set('De rolluik is nu opgerold')
+
+    # Uitrol knop functionaliteit
+    def uitrollenFunc(self):
+        self.oprollen = False
+        self.oprollabelVar.set('De rolluik is nu uitgerold')
 
     # Creeer thread voor de lijngrafiek
     def createThread(self):
@@ -72,7 +76,7 @@ class Centrale:
 
     #####################################################################################
     def createWidgets(self):
-        # Tab Control  -----------------------------------------------------------------
+        # Tab Control  ----------------------------------------------------------------
         tabControl = ttk.Notebook(self.win)  # Creeer tab control
 
         tab1 = ttk.Frame(tabControl)  # Creeer een tab
@@ -84,36 +88,68 @@ class Centrale:
         tabControl.pack(expand=1, fill="both")  # Pack om zichtbaar te maken
         # ~ Tab 1  ---------------------------------------------------------------------
 
-        # Creeer een container frame waar alle andere widgets inkomen
-        self.container = ttk.LabelFrame(tab1, text=' Temperatuursensor ')
-        self.container.grid(column=0, row=0, padx=8, pady=4)
+        # Creeer containers
+        # -----------------------------------------------------------------
 
-        # Voeg een label toe
-        ttk.Label(self.container, text="Geef een waarde voor de bovengrens in graden celsius:").grid(column=0, row=0)
+        gegevens = tk.Label(text="Temperatuursensor gegevens", font=('calibri', 16, 'bold'), background='grey91')
+        instellingen = tk.Label(text="Instellingen", font=('calibri', 16, 'bold'), background='grey91')
+        lijngrafiek = tk.Label(text="Lijngrafiek", font=('calibri', 16, 'bold'), background='grey91')
+
+        self.linksContainer = ttk.Frame(tab1)
+        self.linksContainer.grid(column=0, row=0, padx=8, pady=4, sticky='NW')
+
+        self.rechtsContainer = ttk.Frame(tab1)
+        self.rechtsContainer.grid(column=1, row=0, padx=8, pady=4, sticky='NW')
+
+        self.infoContainer = ttk.LabelFrame(self.linksContainer, labelwidget=gegevens)
+        self.infoContainer.grid(column=0, row=0, padx=8, pady=4, sticky='NW')
+
+        self.graphContainer = ttk.LabelFrame(self.rechtsContainer, labelwidget=lijngrafiek)
+        self.graphContainer.grid(column=1, row=0, padx=8, pady=4, rowspan=2)
+
+        self.knopContainer = ttk.LabelFrame(self.linksContainer, labelwidget=instellingen)
+        self.knopContainer.grid(column=0, row=1, padx=8, pady=100, sticky='N')
+
+        # -----------------------------------------------------------------
+
+        # Infocontainer ------------------------------------
+        # Label voor de bovengrenswaarde
+        self.grenslabelVar = tk.StringVar()
+        self.grenslabelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
+        ttk.Label(self.infoContainer, textvariable=self.grenslabelVar).grid(column=0, row=1, sticky='W')
+
+        # Label voor handmatig/automatisch switch
+        self.switchlabelVar = tk.StringVar()
+        self.switchlabelVar.set('Deze besturingseenheid is ingesteld op handmatig')
+        ttk.Label(self.infoContainer, textvariable=self.switchlabelVar).grid(column=0, row=2, sticky='W')
+
+        # Label voor handmatig/automatisch switch
+        self.oprollabelVar = tk.StringVar()
+        self.oprollabelVar.set('De rolluik is nu opgerold')
+        ttk.Label(self.infoContainer, textvariable=self.oprollabelVar).grid(column=0, row=3, sticky='W')
+
+        # Knopcontainer ------------------------------------
+        # Label voor bovengrens knop
+        ttk.Label(self.knopContainer, text="Geef een waarde voor de bovengrens in graden celsius:").grid(column=0, row=0)
 
         # Maak een invulveld widget
         self.grenswaardeVar = tk.IntVar()
-        grenswaardeVeld = ttk.Entry(self.container, width=10, textvariable=self.grenswaardeVar)
+        grenswaardeVeld = ttk.Entry(self.knopContainer, width=10, textvariable=self.grenswaardeVar)
         grenswaardeVeld.grid(column=1, row=0)
 
         # Knop om bovengrens aan te passen
-        self.grenswaardeKnop = ttk.Button(self.container, text="Verander", command=self.grenswaardeFunc)
+        self.grenswaardeKnop = ttk.Button(self.knopContainer, text="Verander", command=self.grenswaardeFunc)
         self.grenswaardeKnop.grid(column=2, row=0)
 
         # Knop om handmatig en automatisch om te wisselen
-        self.switchKnop = ttk.Button(self.container, width=12, text='Handmatig', command=self.switchFunc)
-        self.switchKnop.grid(column=0, row=4, sticky='W', pady=40)
+        self.switchKnop = ttk.Button(self.knopContainer, width=28, text='Verander de instelling naar automatisch', command=self.switchFunc)
+        self.switchKnop.grid(column=0, row=4, sticky='W', pady=10)
 
-        # Label voor de bovengrenswaarde
-        self.labelVar = tk.StringVar()
-        self.labelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
-        self.labeltje2 = ttk.Label(self.container, textvariable=self.labelVar).grid(column=0, row=1, sticky='W')
-
-        self.radioVar = tk.IntVar()
-        self.radio1 = tk.Radiobutton(self.container, background='grey91', text='Oprollen', variable=self.radioVar, value=0, command=self.radioFunc)
-        self.radio2 = tk.Radiobutton(self.container, background='grey91', text='Uitrollen', variable=self.radioVar, value=1, command=self.radioFunc)
-        self.radio1.grid(column=0, row=5, sticky=tk.W, in_=self.container)
-        self.radio2.grid(column=0, row=6, sticky=tk.W, in_=self.container)
+        # Knoppen om op te rollen of uit te rollen
+        self.oprolKnop = ttk.Button(self.knopContainer, text='Oprollen', command=self.oprollenFunc)
+        self.uitrolKnop = ttk.Button(self.knopContainer, text='Uitrollen', command=self.uitrollenFunc)
+        self.oprolKnop.grid(column=0, row=5, sticky=tk.W, in_=self.knopContainer)
+        self.uitrolKnop.grid(column=0, row=6, sticky=tk.W, in_=self.knopContainer)
 
         # Tab 2  ------------------------------------------------------------------------
         # Creeer een container frame waar alle andere widgets inkomen -- Tab2
@@ -124,17 +160,13 @@ class Centrale:
         labelsFrame = ttk.LabelFrame(self.container2, text=' Labels in een frame test ')
         labelsFrame.grid(column=0, row=7)
 
-        # Plaats labels in containter - verticaal
-        # ttk.Label(labelsFrame, text="Label1").grid(column=0, row=0)
-        # ttk.Label(labelsFrame, text="Label2").grid(column=0, row=1)
+        # ===================================================
 
-        # =======================================================================================
-
-        graphFrame = tk.Frame(self.container)
-        graphFrame.grid(column=4, row=10, padx=100)
+        graphFrame = tk.Frame(self.graphContainer)
+        graphFrame.grid(column=0, row=0)
         self.grafiek = Lijngrafiek(graphFrame)
 
-        # =======================================================================================
+        # ===================================================
 
         # Creeer wat ruimte om de labels
         for child in labelsFrame.winfo_children():
