@@ -3,7 +3,7 @@ import struct
 
 
 class eenheid:
-    def __init__(self, id, naam, type, poort, grenswaarde, meet_freq, deel_freq, datum_toe, ):
+    def __init__(self, id, naam, type, poort): #grenswaarde, meet_freq, deel_freq, datum_toe):
         """
         initialiseren van all klas variabelen
         :param id: Uniek id voor een eenheid
@@ -16,12 +16,12 @@ class eenheid:
         self.type = type
         self.poort = poort
         self.ser = self.connect()
-        self.grenswaarde = grenswaarde
-        self.meet_freq = meet_freq
-        self.deel_freq = deel_freq
-        self.datum = datum_toe
+        # self.grenswaarde = grenswaarde
+        # self.meet_freq = meet_freq
+        # self.deel_freq = deel_freq
+        # self.datum = datum_toe
 
-    def update(self):
+    #def update(self):
 
 
     def connect(self):
@@ -35,12 +35,11 @@ class eenheid:
         return ser
 
     def open_screen(self):
-        self.ser.write(struct.pack('>B', 255))
+        # self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 1))
 
-
     def close_screen(self):
-        self.ser.write(struct.pack('>B', 255))
+        # self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 2))
 
     def verander_mode(self):
@@ -78,12 +77,12 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
-eenheid = eenheid('test', '2', 'com5')
+eenheid = eenheid(1, 'test', '2', 'com3')
 print(eenheid)
 while True:
 
-    eenheid.ontvang()
-    nummer = 3
+    nummer = input("commando")
+    #eenheid.ontvang()
     if nummer == 1:
         eenheid.open_screen()
 

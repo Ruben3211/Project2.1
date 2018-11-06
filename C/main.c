@@ -294,7 +294,7 @@ void setup(){
 	USART_Init(MYUBRR);
 	setRoluikStatus();
 	
-	SCH_Init_T1(); // Schedular initialiseren 
+	SCH_Init_T1(); // Schedular initialiseren
 }
 
 int main(void)
@@ -302,7 +302,6 @@ int main(void)
 	setup(); // roep de setup functie aan
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
-
 	//SCH_Add_Task(lamp_licht,0,10);
 	//SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
 	//SCH_Add_Task(send_data, 0, 500);
