@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import tkinter as tk
 from tkinter import ttk
 from tkinter import Menu
@@ -20,11 +19,20 @@ class Centrale:
         self.bovengrens = 20
         self.switch = True
         self.oprollen = True
-        self.frequentie = 10
+        self.frequentieTemp = 40
+        # self.frequentieLicht = 30
 
         # Voeg een titel toe
         self.win.title("De Centrale")
         self.createWidgets()
+
+    # Frequentie knop functionaliteit
+    def frequentieFunc(self):
+        try:
+            self.frequentieTemp = self.frequentieVar.get()
+        except:
+            print('Ja.... da kan nie he')
+        self.frequentielabelVar.set('De temperatuur wordt om de ' + str(self.frequentieTemp) + ' seconden gemeten')
 
     # Grenswaarde knop functionaliteit
     def grenswaardeFunc(self):
@@ -33,7 +41,7 @@ class Centrale:
         except:
             print('Ja.... da kan nie he')
         self.grenslabelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
-        # self.createThread()
+        self.createThread()
 
     # Switch knop functionaliteit
     def switchFunc(self):
@@ -92,9 +100,9 @@ class Centrale:
         # Creeer containers
         # -----------------------------------------------------------------
 
-        gegevens = tk.Label(text="Temperatuursensor gegevens", font=('calibri', 16, 'bold'), background='grey91')
-        instellingen = tk.Label(text="Instellingen", font=('calibri', 16, 'bold'), background='grey91')
-        lijngrafiek = tk.Label(text="Lijngrafiek", font=('calibri', 16, 'bold'), background='grey91')
+        gegevensLabel = tk.Label(text="Temperatuursensor gegevens", font=('calibri', 16, 'bold'), background='grey91')
+        instellingenLabel = tk.Label(text="Instellingen", font=('calibri', 16, 'bold'), background='grey91')
+        lijngrafiekLabel = tk.Label(text="Lijngrafiek", font=('calibri', 16, 'bold'), background='grey91')
 
         self.linksContainer = ttk.Frame(tab1)
         self.linksContainer.grid(column=0, row=0, padx=8, pady=4, sticky='NW')
@@ -102,13 +110,13 @@ class Centrale:
         self.rechtsContainer = ttk.Frame(tab1)
         self.rechtsContainer.grid(column=1, row=0, padx=8, pady=4, sticky='NW')
 
-        self.infoContainer = ttk.LabelFrame(self.linksContainer, labelwidget=gegevens)
+        self.infoContainer = ttk.LabelFrame(self.linksContainer, labelwidget=gegevensLabel)
         self.infoContainer.grid(column=0, row=0, padx=8, pady=4, sticky='NW')
 
-        self.graphContainer = ttk.LabelFrame(self.rechtsContainer, labelwidget=lijngrafiek)
+        self.graphContainer = ttk.LabelFrame(self.rechtsContainer, labelwidget=lijngrafiekLabel)
         self.graphContainer.grid(column=1, row=0, padx=8, pady=4, rowspan=2)
 
-        self.knopContainer = ttk.LabelFrame(self.linksContainer, labelwidget=instellingen)
+        self.knopContainer = ttk.LabelFrame(self.linksContainer, labelwidget=instellingenLabel)
         self.knopContainer.grid(column=0, row=1, padx=8, pady=100, sticky='N')
 
         # -----------------------------------------------------------------
@@ -119,21 +127,26 @@ class Centrale:
         self.grenslabelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
         ttk.Label(self.infoContainer, textvariable=self.grenslabelVar).grid(column=0, row=1, sticky='W')
 
+        # Label voor de frequentie van het meten
+        self.frequentielabelVar = tk.StringVar()
+        self.frequentielabelVar.set('De temperatuur wordt om de ' + str(self.frequentieTemp) + ' seconden gemeten')
+        ttk.Label(self.infoContainer, textvariable=self.frequentielabelVar).grid(column=0, row=2, sticky='W')
+
         # Label voor handmatig/automatisch switch
         self.switchlabelVar = tk.StringVar()
         self.switchlabelVar.set('Deze besturingseenheid is ingesteld op handmatig')
-        ttk.Label(self.infoContainer, textvariable=self.switchlabelVar).grid(column=0, row=2, sticky='W')
+        ttk.Label(self.infoContainer, textvariable=self.switchlabelVar).grid(column=0, row=3, sticky='W')
 
-        # Label voor handmatig/automatisch switch
+        # Label om aan te geven of rolluik is opgerold of niet
         self.oprollabelVar = tk.StringVar()
         self.oprollabelVar.set('De rolluik is nu opgerold')
-        ttk.Label(self.infoContainer, textvariable=self.oprollabelVar).grid(column=0, row=3, sticky='W')
+        ttk.Label(self.infoContainer, textvariable=self.oprollabelVar).grid(column=0, row=4, sticky='W')
 
         # Knopcontainer ------------------------------------
         # Label voor bovengrens knop
         ttk.Label(self.knopContainer, text="Geef een waarde voor de bovengrens in graden celsius:").grid(column=0, row=0)
 
-        # Maak een invulveld widget
+        # Invulveld voor bovengrenswaarde
         self.grenswaardeVar = tk.IntVar()
         grenswaardeVeld = ttk.Entry(self.knopContainer, width=10, textvariable=self.grenswaardeVar)
         grenswaardeVeld.grid(column=1, row=0)
@@ -141,6 +154,18 @@ class Centrale:
         # Knop om bovengrens aan te passen
         self.grenswaardeKnop = ttk.Button(self.knopContainer, text="Verander", command=self.grenswaardeFunc)
         self.grenswaardeKnop.grid(column=2, row=0)
+
+        # Label voor frequentie knop
+        ttk.Label(self.knopContainer, text="Geef een waarde voor de meetfrequentie in seconden:").grid(column=0, row=1, sticky="W")
+
+        # Invulveld voor frequentie
+        self.frequentieVar = tk.IntVar()
+        frequentieVeld = ttk.Entry(self.knopContainer, width=10, textvariable=self.frequentieVar)
+        frequentieVeld.grid(column=1, row=1)
+
+        # Knop om frequentie aan te passen
+        self.frequentieKnop = ttk.Button(self.knopContainer, text="Verander", command=self.frequentieFunc)
+        self.frequentieKnop.grid(column=2, row=1)
 
         # Knop om handmatig en automatisch om te wisselen
         self.switchKnop = ttk.Button(self.knopContainer, width=28, text='Verander de instelling naar automatisch', command=self.switchFunc)
@@ -230,7 +255,7 @@ class Lijngrafiek:
 # ======================
 oop = Centrale()
 oop.win.mainloop()
-=======
+# =======
 import tkinter as tk
 from tkinter import ttk
 from tkinter import Menu
