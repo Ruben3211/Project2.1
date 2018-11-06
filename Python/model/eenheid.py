@@ -3,9 +3,11 @@ import struct
 
 
 class eenheid:
-    def __init__(self, id, naam, type, poort): #grenswaarde, meet_freq, deel_freq, datum_toe):
+
+    def __init__(self, id, naam, type, poort): # grenswaarde, meet_freq, deel_freq, datum_toe, ):
+
         """
-        initialiseren van all klas variabelen
+        :initialiseren van all klas variabelen
         :param id: Uniek id voor een eenheid
         :param naam: naam van de eenheid
         :param type: type van de eenheid
@@ -20,9 +22,8 @@ class eenheid:
         # self.meet_freq = meet_freq
         # self.deel_freq = deel_freq
         # self.datum = datum_toe
-
-    #def update(self):
-
+        self.sensor_waarde = 0
+   # def update(self):
 
     def connect(self):
         ser = serial.Serial(port=self.poort,
@@ -35,11 +36,11 @@ class eenheid:
         return ser
 
     def open_screen(self):
-        # self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 1))
 
     def close_screen(self):
-        # self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 2))
 
     def verander_mode(self):
@@ -67,8 +68,13 @@ class eenheid:
         self.ser.write(struct.pack('>B', 7))
         self.ser.write(struct.pack('>B', self.deel_freq))
 
+    def krijg_sensor_waarde(self):
+        self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 8))
+        self.waarde = self.bit_to_int(self.ser.readline(2))
 
     def ontvang(self):
+
         nummer = self.ser.readline(2)
         return nummer
 
@@ -77,17 +83,19 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
-eenheid = eenheid(1, 'test', '2', 'com3')
-print(eenheid)
+eenheid = eenheid(1, 'test', '0', 'com5')
 while True:
 
-    nummer = input("commando")
-    #eenheid.ontvang()
+    nummer = int(input("commando"))
     if nummer == 1:
         eenheid.open_screen()
 
     elif nummer == 2:
         eenheid.close_screen()
 
+    elif nummer == 8:
+        eenheid.krijg_sensor_waarde()
+        print(eenheid.waarde)
+
     elif nummer == 3:
-        print(eenheid.bit_to_int(eenheid.ontvang()))
+        eenheid.verander_mode()
