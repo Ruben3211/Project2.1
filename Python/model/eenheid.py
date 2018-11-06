@@ -3,13 +3,11 @@ import struct
 
 
 class eenheid:
-<<<<<<< HEAD
+
     def __init__(self, id, naam, type, poort): # grenswaarde, meet_freq, deel_freq, datum_toe, ):
-=======
-    def __init__(self, id, naam, type, poort): #grenswaarde, meet_freq, deel_freq, datum_toe):
->>>>>>> ad12bc9b4f0a9d80e56d2c5c738f1cddf7a9524d
+
         """
-        initialiseren van all klas variabelen
+        :initialiseren van all klas variabelen
         :param id: Uniek id voor een eenheid
         :param naam: naam van de eenheid
         :param type: type van de eenheid
@@ -24,14 +22,8 @@ class eenheid:
         # self.meet_freq = meet_freq
         # self.deel_freq = deel_freq
         # self.datum = datum_toe
-<<<<<<< HEAD
         self.sensor_waarde = 0
    # def update(self):
-=======
-
-    #def update(self):
->>>>>>> ad12bc9b4f0a9d80e56d2c5c738f1cddf7a9524d
-
 
     def connect(self):
         ser = serial.Serial(port=self.poort,
@@ -44,19 +36,11 @@ class eenheid:
         return ser
 
     def open_screen(self):
-<<<<<<< HEAD
         #self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 1))
 
     def close_screen(self):
-        #self.ser.write(struct.pack('>B', 255))
-=======
         # self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 1))
-
-    def close_screen(self):
-        # self.ser.write(struct.pack('>B', 255))
->>>>>>> ad12bc9b4f0a9d80e56d2c5c738f1cddf7a9524d
         self.ser.write(struct.pack('>B', 2))
 
     def verander_mode(self):
@@ -99,20 +83,11 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
-<<<<<<< HEAD
-eenheid = eenheid(1,'test', '2', 'com5')
-print(eenheid)
-while True:
-
-    nummer = int(input("voer hier je nummer in"))
-=======
-eenheid = eenheid(1, 'test', '2', 'com3')
+eenheid = eenheid(1, 'test', '2', 'com5')
 print(eenheid)
 while True:
 
     nummer = input("commando")
-    #eenheid.ontvang()
->>>>>>> ad12bc9b4f0a9d80e56d2c5c738f1cddf7a9524d
     if nummer == 1:
         eenheid.open_screen()
 
