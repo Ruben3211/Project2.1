@@ -6,9 +6,8 @@
  */ 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
 #include <stdlib.h>
-#include  <avr/sfr_defs.h>
+#include <avr/sfr_defs.h>
 #define F_CPU 16E6
 #define FOSC 16000000 // Clock Speed
 #define BAUD 9600
@@ -127,12 +126,6 @@ float sensor_lees(int sensor){
 			return distance;
 			break;
 	}
-}
-
-ISR(USART_RXC_vect)
-{
-	USART_Transmit('h');
-	cont_commando(UDR0);
 }
 
 // serial.c
@@ -263,7 +256,6 @@ void USART_Init( unsigned int ubrr)
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
 	/* Set frame format: 8data, 2stop bit */
 	UCSR0C = (1<<USBS0)|(3<<UCSZ00);
-	UCSR0B |= (1 << RXCIE0); // enable interupt
 }
 
 // timer
@@ -293,12 +285,8 @@ void setup(){
 	USART_Init(MYUBRR);
 	setRoluikStatus();
 	
-<<<<<<< HEAD
 	SCH_Init_T1(); // Schedular initialiseren 
-	sei();
-=======
-	SCH_Init_T1(); // Schedular initialiseren
->>>>>>> ad12bc9b4f0a9d80e56d2c5c738f1cddf7a9524d
+
 }
 
 int main(void)
@@ -306,19 +294,11 @@ int main(void)
 	setup(); // roep de setup functie aan
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
-<<<<<<< HEAD
 
 	//SCH_Add_Task(lees_waarde, 0, 30000);
 	//SCH_Add_Task(cont_commando, 0 ,20);
 	SCH_Start(); // Enable Schedular
 	
-=======
-	//SCH_Add_Task(lamp_licht,0,10);
-	//SCH_Add_Task(cont_commando, 0, 10); // maak een task aan voor het wachten op een commando
-	//SCH_Add_Task(send_data, 0, 500);
-	//SCH_Start(); // Enable Schedular
-	char buffer[5];
->>>>>>> ad12bc9b4f0a9d80e56d2c5c738f1cddf7a9524d
     while (1) 
     {
 		// zorg er voor dat hij de taken ook gaat dischpatchen 
