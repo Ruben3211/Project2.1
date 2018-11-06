@@ -119,5 +119,4 @@ class DB:
         self.script("USE jeloambo")
 
 db = DB()
-print(db.select("SELECT name, FROM j_units"))
-print(db.insert("SELECT"))
+print(db.select("SELECT name FROM j_units"))
