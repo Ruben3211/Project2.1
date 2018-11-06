@@ -5,7 +5,8 @@ import usb
 dev = usb.core.find(find_all=True)
 # loop through devices, printing vendor and product ids in decimal and hex
 for cfg in dev:
+    a = 0
     #sys.stdout.write('Decimal VendorID=' + str(cfg.port_number) + ' & ProductID=' + str(cfg.idProduct) + '\n')
     #sys.stdout.write('Hexadecimal VendorID=' + hex(cfg.idVendor) + ' & ProductID=' + hex(cfg.idProduct) + '\n\n')
-    sys.stdout.write(str(cfg))
-    exit()
+    if(a == 0):
+        sys.stdout.write(str(cfg))

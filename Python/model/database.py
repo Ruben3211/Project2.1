@@ -6,7 +6,7 @@ class DB:
         """
         Maakt een connectie met de database zodra de klasse DB wordt aangemaakt
         """
-        self.sql = mysql.connector.connect(host="localhost", user="root", passwd="", database="jeloambo")
+        self.sql = mysql.connector.connect(host="localhost", user="root", passwd="")
 
     def select(self, query):
         """
@@ -64,3 +64,36 @@ class DB:
         cursor.execute(query)
         self.sql.commit()
         return self.done(cursor.rowcount)
+
+    def script(self, query):
+        cursor = self.sql.cursor()
+        cursor.execute(query)
+        self.sql.commit()
+        return self.done(cursor.rowcount)
+
+    def createDB(self):
+        fd = open('jeloambo.sql', 'r', encoding="utf-8")
+        sqlFile = fd.read()
+        fd.close()
+        commands = sqlFile.replace("\n", "").split(";")
+        # print(sqlFile)
+        for command in commands:
+            self.script(command)
+
+    def checkDB(self):
+        query = "SHOW DATABASES"
+        db_list = self.select(query)
+        l = []
+        for i in db_list:
+            l.append(i[0])
+        if "jeloambo" in l:
+            print("Database bestaat al")
+        elif "jeloambo" not in l:
+            self.createDB()
+        else:
+            print("Er is iets mis gegaan")
+
+
+
+db = DB()
+db.checkDB()
