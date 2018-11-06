@@ -36,11 +36,11 @@ class eenheid:
         return ser
 
     def open_screen(self):
-        #self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 1))
 
     def close_screen(self):
-        # self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 2))
 
     def verander_mode(self):
@@ -71,7 +71,7 @@ class eenheid:
     def krijg_sensor_waarde(self):
         self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 8))
-        self.waarde = self.bit_to_int(self.ser.readline(3))
+        self.waarde = self.bit_to_int(self.ser.readline(2))
 
     def ontvang(self):
 
@@ -83,11 +83,10 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
-eenheid = eenheid(1, 'test', '2', 'com5')
-print(eenheid)
+eenheid = eenheid(1, 'test', '0', 'com5')
 while True:
 
-    nummer = input("commando")
+    nummer = int(input("commando"))
     if nummer == 1:
         eenheid.open_screen()
 
@@ -95,8 +94,8 @@ while True:
         eenheid.close_screen()
 
     elif nummer == 8:
-        eenheid.test()
-        print(eenheid.ontvang())
+        eenheid.krijg_sensor_waarde()
+        print(eenheid.waarde)
 
     elif nummer == 3:
         eenheid.verander_mode()

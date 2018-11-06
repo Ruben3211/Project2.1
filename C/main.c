@@ -14,7 +14,7 @@
 #define MYUBRR FOSC/16/BAUD-1
 #include "AVR_TTC_scheduler.c"
 int modes = 0;
-double waarde;
+double waarde = 0;
 uint8_t sensor_type = 0;
 uint8_t meet_freq;
 uint8_t grens_waarde;
@@ -35,21 +35,19 @@ void verander_mode(){
 	}
 }
 
-void cont_commando(int comand){
-	//command = USART_Receive();
-	//if(USART_Receive() != 0xFF){
-		//    return;
-	//}
-	//command = USART_Receive();
-	command = comand;
+void cont_commando(){
+	if(USART_Receive() != 0xFF){
+		return;
+	}
+	command = USART_Receive();
 	switch(command)
 	{
 		// Open het luik
-		case 1:
+		case 0x01:
 		open_rolluik();
 		return;
 		// Sluit luik
-		case 2:
+		case 0x02:
 		sluit_rolluik();
 		return;
 		// Verander de mode van automatisch naar handmatig en andersom
@@ -72,7 +70,7 @@ void cont_commando(int comand){
 		case 0x07:
 		deel_freq = USART_Receive();
 		return;
-		case 0x08:
+		case '8':
 		itoa(waarde, buffer, 10);
 		USART_sendstring(buffer);
 		return;
@@ -284,7 +282,7 @@ void setup(){
 	set_PortD();
 	USART_Init(MYUBRR);
 	setRoluikStatus();
-	
+	timer();
 	SCH_Init_T1(); // Schedular initialiseren 
 
 }
@@ -295,8 +293,8 @@ int main(void)
 	
 // Zet hier onder alle taken die van af de start al moeten draaien
 
-	//SCH_Add_Task(lees_waarde, 0, 30000);
-	//SCH_Add_Task(cont_commando, 0 ,20);
+	SCH_Add_Task(lees_waarde, 0, 30000);
+	SCH_Add_Task(cont_commando, 0 ,20);
 	SCH_Start(); // Enable Schedular
 	
     while (1) 
