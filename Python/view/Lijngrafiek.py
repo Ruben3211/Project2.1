@@ -36,7 +36,7 @@ class Lijngrafiek:
 
 
 
-root = tk.Tk()
-app = Lijngrafiek(root)
-ani = animation.FuncAnimation(app.fig, app.animate, interval=100, blit=False)
-root.mainloop()
+# root = tk.Tk()
+# app = Lijngrafiek(root)
+# ani = animation.FuncAnimation(app.fig, app.animate, interval=100, blit=False)
+# root.mainloop()
