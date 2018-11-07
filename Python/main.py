@@ -3,12 +3,13 @@ from tkinter import *
 from view import *
 from model import *
 from controller import *
+from controller import Dashboard
 
 class main(Tk):
     def __init__(self):
         super.__init__()
         self.title("jelambo")
-
+        paneel_controller(self)
     def restart(self):
         self.title('jelambo')
 
