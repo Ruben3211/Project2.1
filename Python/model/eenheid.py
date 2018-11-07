@@ -1,103 +1,145 @@
+"""
+In de klasse eenheid kunnen meerdere bestuuringseenheden worden aangemaakt.
+Deze eenheden halen de waarden van de arduino op en maken hiermee het product functioneel.
+
+Created: 07-11-2018
+Author: Jeloambo
+"""
+
 import serial
 import struct
+import time
 
 
 class eenheid:
-
-    def __init__(self, id, naam, type, poort): # grenswaarde, meet_freq, deel_freq, datum_toe, ):
-
+    def __init__(self, id, naam, sensor_type, poort, meet_freq, grenswaarde):
         """
         :initialiseren van all klas variabelen
         :param id: Uniek id voor een eenheid
         :param naam: naam van de eenheid
-        :param type: type van de eenheid
+        :param sensor_type: type van de eenheid
         :param poort: de usb poort waarmee de eenheid verbing
+        :param ser: de connectie naar de arduino
+        :param grenswaarde: is de grenswaarde waarop de het scherm moet sluiten en openen
+        :param meet_freq: meet frequentie voor het meten van de sensor waarden
+        :param sensor_waarde: de waarde van de sensor
+        :param mode: is de mode van de eenheid. handmatig of automatisch
         """
         self.id = id
         self.naam = naam
-        self.type = type
+        self.sensor_type = int(sensor_type)
         self.poort = poort
         self.ser = self.connect()
-        # self.grenswaarde = grenswaarde
-        # self.meet_freq = meet_freq
-        # self.deel_freq = deel_freq
+        self.grenswaarde = grenswaarde
+        self.meet_freq = meet_freq
         # self.datum = datum_toe
         self.sensor_waarde = 0
-   # def update(self):
+        self.mode = 0
 
+    # maakt de connectie aan voor de besturingseenheid
     def connect(self):
-        ser = serial.Serial(port=self.poort,
+        self.ser = serial.Serial(port=self.poort,
                             baudrate=9600,
                             bytesize=8,
                             stopbits=2,
                             xonxoff=True)
 
         print('verbonden met', self.naam)
-        return ser
+        return self.ser
 
-    def open_screen(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 1))
+    # Open het scherm
+    def open_scherm(self):
+        if self.mode == 0:
+            self.ser.write(struct.pack('>B', 255))
+            self.ser.write(struct.pack('>B', 1))
+        elif self.mode == 1 and self.waarde > self.grenswaarde:
+            self.ser.write(struct.pack('>B', 255))
+            self.ser.write(struct.pack('>B', 1))
 
-    def close_screen(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 2))
+    # Sluit het scherm
+    def sluit_scherm(self):
+        if self.mode == 0:
+            self.ser.write(struct.pack('>B', 255))
+            self.ser.write(struct.pack('>B', 2))
+        elif self.mode == 1 and self.waarde <= self.grenswaarde:
+            self.ser.write(struct.pack('>B', 255))
+            self.ser.write(struct.pack('>B', 2))
 
+    # Veranderd de mode van de besturingseenheid van automatisch naar handmatig en andersom
     def verander_mode(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 3))
+        if self.mode == 1:
+            self.mode = 0
+        elif self.mode == 0:
+            self.mode = 1
+        return self.mode
 
-    def stuur_sensor_type(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 4))
-        self.ser.write(struct.pack('>B', self.meet_freq))
-
-    def stuur_meet_freq(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 5))
-        self.ser.write(struct.pack('>B', self.meet_freq))
-
-    def stuur_grens_waarde(self):
-        # stuur een nieuwe waarde voor wanneer het roluik omhoog en naar beneden moet gaan
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 6))
-        self.ser.write(struct.pack('>B', self.grenswaarde))
-
-    def stuur_deel_freq(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 7))
-        self.ser.write(struct.pack('>B', self.deel_freq))
-
+    # Haalt de sensor waarde op van de arduino via atmel
     def krijg_sensor_waarde(self):
         self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 8))
-        interval = self.ser.readline(2)
-        self.sensor_waarde = self.bit_to_int(interval)
+        time.sleep(1)
+        self.waarde = self.ser.readline(2)
+        self.waarde = self.bit_to_int(self.waarde)
 
-    def ontvang(self):
-
-        nummer = self.ser.readline(2)
-        return nummer
-
+    # Zet een bit om in een integer
     def bit_to_int(self, ont):
         self.bit = ont
         nummer = int(self.bit)
         return nummer
 
-eenheid = eenheid(1, 'test', '0', 'com3')
-while True:
+    # Een functie voor het handmatig besturen van de eenheid
+    def handmatig(self):
+        while True:
+            nummer = int(input(">"))
 
-    moi = int(input("commando"))
-    if moi == 1:
-        eenheid.open_screen()
+            if nummer == 1:
+                if self.mode == 1:
+                    self.open_scherm()
+                else:
+                    self.open_scherm()
 
-    elif moi == 2:
-        eenheid.close_screen()
+            elif nummer == 2:
+                if self.mode == 1:
+                    self.sluit_scherm()
+                else:
+                    self.sluit_scherm()
 
-    elif moi == 8:
-        eenheid.krijg_sensor_waarde()
+            elif nummer == 3:
+                self.verander_mode()
+                print(self.mode)
 
-    elif moi == 3:
-        eenheid.verander_mode()
+            elif nummer == 8:
+                self.krijg_sensor_waarde()
+                print(self.waarde)
 
-    print(eenheid.sensor_waarde)
+            if self.mode == 1:
+                self.automatisch()
+            else:
+                self.handmatig()
+
+    # Een functie voor het automatisch besturen van de besturingseenheid
+    def automatisch(self):
+        while True:
+            self.krijg_sensor_waarde()
+            print(self.waarde)
+
+            self.sluit_scherm()
+            self.open_scherm()
+
+            # De volgende 3 regels moeten nog veranderd worden.
+            self.mode = int(input(">>") or self.mode)
+            self.meet_freq = int(input(">>>") or self.meet_freq)
+            self.grenswaarde = int(input(">>>>") or self.grenswaarde)
+
+            if self.mode == 0:
+                self.handmatig()
+            else:
+                self.automatisch()
+            time.sleep(self.meet_freq)
+
+
+"""
+:param eenheid: maakt een eenheid aan
+"""
+test = eenheid(1, 'test', 0, 'com3', 2, 30)
+test.handmatig()
