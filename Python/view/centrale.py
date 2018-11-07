@@ -10,6 +10,7 @@ import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import random
 from threading import Thread
+from time import sleep
 
 # =======================================================================================
 class Centrale:
@@ -41,7 +42,6 @@ class Centrale:
         except:
             print('Ja.... da kan nie he')
         self.grenslabelVar.set('De bovengrens is: ' + str(self.bovengrens) + ' graden celsius')
-        self.createThread()
 
     # Switch knop functionaliteit
     def switchFunc(self):
@@ -68,14 +68,6 @@ class Centrale:
     def uitrollenFunc(self):
         self.oprollen = False
         self.oprollabelVar.set('De rolluik is nu uitgerold')
-
-    # Creeer thread voor de lijngrafiek
-    def createThread(self):
-        self.runT = Thread(target=self.grafiek.runGraph())
-        self.runT.setDaemon(True)
-        self.runT.start()
-        print(self.runT)
-        print('createThread():', self.runT.isAlive())
 
     # Sluit de GUI
     def _quit(self):
@@ -188,9 +180,9 @@ class Centrale:
 
         # ===================================================
 
-        graphFrame = tk.Frame(self.graphContainer)
-        graphFrame.grid(column=0, row=0)
-        self.grafiek = Lijngrafiek(graphFrame)
+        self.graphFrame = tk.Frame(self.graphContainer)
+        self.graphFrame.grid(column=0, row=0)
+        self.grafiek = Lijngrafiek(self.graphFrame)
 
         # ===================================================
 
@@ -238,20 +230,17 @@ class Lijngrafiek:
         graphFrame.pack()
 
     def animate(self, i):
-        while True:
-            # yar.append(99-i)
-            self.yar.append(random.randint(0, 10))
-            self.xar.append(i)
-            self.line.set_data(self.xar, self.yar)
-            self.ax.set_xlim(0, i + 1)
-
-    # Lijngrafiek runner
-    def runGraph(self):
-        animation.FuncAnimation(self.fig, self.animate, interval=100, blit=False)
+        # yar.append(99-i)
+        self.yar.append(random.randint(0, 10))
+        self.xar.append(i)
+        self.line.set_data(self.xar, self.yar)
+        self.ax.set_xlim(0, i + 1)
 
 
 # ======================
 # Start GUI
 # ======================
+
 oop = Centrale()
+ani = animation.FuncAnimation(oop.grafiek.fig, oop.grafiek.animate, interval=500, blit=False)
 oop.win.mainloop()
