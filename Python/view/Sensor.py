@@ -3,7 +3,7 @@ from tkinter import ttk
 
 # from Temperatuurinfo import *
 # from temperatuurknoppen import *
-from Lijngrafiek import *
+from .Lijngrafiek import *
 
 class Sensor:
         def __init__(self, _frame, _soort, _bovengrens, _frequentie, _titel, _eenheid):

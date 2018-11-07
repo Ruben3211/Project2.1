@@ -1,4 +1,4 @@
-from Sensor import *
+from .Sensor import *
 
 class Temperatuursensor(Sensor):
     def __init__(self, tab):
