@@ -23,22 +23,13 @@ class meetController:
 
     def loop(self):
         while True:
-            self.ontvang_sensor_waarde()
-            self.ontvang_grenswaarde()
+            # self.ontvang_sensor_waarde()
+            # self.ontvang_grenswaarde()
+            print(self.ontvang_licht_switch())
             sleep(5)
 
     def ontvang_grenswaarde(self):
         print(Dashboardview.temperatuursensor.bovengrens)
-
-    def stuur_mode(self):
-        return self.mode
-
-    def stuur_meet_freq(self):
-        return self.meet_freq
-
-    def stuur_grenswaarde(self):
-        return self.grenswaarde
-
 
     def ontvang_temp_bovengrens(self):
         return self.dashboard.temperatuursensor.bovengrens
@@ -59,7 +50,12 @@ class meetController:
         return self.dashboard.lichtsensor.frequentie
 
     def ontvang_licht_switch(self):
-        return self.dashboard.lichtsensor.switch
+        self.mode = self.dashboard.lichtsensor.switch
+        if self.mode == True:
+            self.mode = 1
+        elif self.mode == False:
+            self.mode = 0
+        return self.mode
 
     def ontvang_licht_oprollen(self):
         return self.dashboard.lichtsensor.oprollen
