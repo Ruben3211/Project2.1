@@ -20,7 +20,3 @@ class meetController:
         for t in self.eenheden:
             p = (t.waarde, t.id)
             self.e.db.insert(q, p)
-
-# m = meetController()
-# m.sla_waarde_op()
-
