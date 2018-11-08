@@ -18,7 +18,7 @@ class eenheid:
         :param id: Uniek id voor een eenheid
         :param naam: naam van de eenheid
         :param sensor_type: type van de eenheid
-        :param poort: de usb poort waarmee de eenheid verbing
+        :param poort: de usb poort waarmee de eenheid verbind
         :param ser: de connectie naar de arduino
         :param grenswaarde: is de grenswaarde waarop de het scherm moet sluiten en openen
         :param meet_freq: meet frequentie voor het meten van de sensor waarden
@@ -27,7 +27,7 @@ class eenheid:
         """
         self.id = id
         self.naam = naam
-        self.sensor_type = int(sensor_type)
+        self.sensor_type = sensor_type
         self.poort = poort
         self.ser = self.connect()
         self.grenswaarde = grenswaarde
@@ -65,6 +65,19 @@ class eenheid:
             self.ser.write(struct.pack('>B', 255))
             self.ser.write(struct.pack('>B', 2))
 
+    def ontvang_sensor_type(self):
+        self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 3))
+        self.sensor_type = self.ser.readline(2)
+        self.sensor_type = self.bit_to_int(self.sensor_type)
+
+    # Haalt de sensor waarde op van de arduino via atmel
+    def ontvang_sensor_waarde(self):
+        self.ser.write(struct.pack('>B', 255))
+        self.ser.write(struct.pack('>B', 4))
+        self.waarde = self.ser.readline(2)
+        self.waarde = self.bit_to_int(self.waarde)
+
     # Veranderd de mode van de besturingseenheid van automatisch naar handmatig en andersom
     def verander_mode(self):
         if self.mode == 1:
@@ -72,14 +85,6 @@ class eenheid:
         elif self.mode == 0:
             self.mode = 1
         return self.mode
-
-    # Haalt de sensor waarde op van de arduino via atmel
-    def krijg_sensor_waarde(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 8))
-        time.sleep(1)
-        self.waarde = self.ser.readline(2)
-        self.waarde = self.bit_to_int(self.waarde)
 
     # Zet een bit om in een integer
     def bit_to_int(self, ont):
@@ -90,7 +95,7 @@ class eenheid:
     # Een functie voor het handmatig besturen van de eenheid
     def handmatig(self):
         while True:
-            nummer = int(input(">"))
+            nummer = int(input(">" or 4))
 
             if nummer == 1:
                 if self.mode == 1:
@@ -108,8 +113,8 @@ class eenheid:
                 self.verander_mode()
                 print(self.mode)
 
-            elif nummer == 8:
-                self.krijg_sensor_waarde()
+            elif nummer == 4:
+                self.ontvang_sensor_waarde()
                 print(self.waarde)
 
             if self.mode == 1:
@@ -120,7 +125,7 @@ class eenheid:
     # Een functie voor het automatisch besturen van de besturingseenheid
     def automatisch(self):
         while True:
-            self.krijg_sensor_waarde()
+            self.ontvang_sensor_waarde()
             print(self.waarde)
 
             self.sluit_scherm()
@@ -137,9 +142,25 @@ class eenheid:
                 self.automatisch()
             time.sleep(self.meet_freq)
 
+    # functie voor het opzetten van de connectie
+    def setup(self):
+        print(".")
+        time.sleep(3)
+        print("..")
+        for x in range(1, 2):
+            self.open_scherm()
+            time.sleep(1)
+            print("...")
+            self.sluit_scherm()
+            time.sleep(1)
+
+        print("{} is gereed voor gebruik" .format(self.naam))
+        test.handmatig()
+
+
 
 """
 :param eenheid: maakt een eenheid aan
 """
 test = eenheid(1, 'test', 0, 'com3', 2, 30)
-test.handmatig()
+test.setup()
