@@ -1,13 +1,14 @@
 from controller.eenheid_controller import *
 from time import sleep
 from view.Dashboardview import Dashboardview
+from threading import Thread
 
 class meetController:
     def __init__(self, master):
         self.dashboard = Dashboardview(master)
         self.e = eenheidController()
         self.eenheden = self.e.haal_eenheden()
-        self.loop()
+        self.createThread()
 
     def sla_waarde_op(self, waarde):
         self.waarde = waarde
@@ -20,6 +21,14 @@ class meetController:
         for t in self.eenheden:
             t.ontvang_sensor_waarde()
             self.sla_waarde_op(t.waarde)
+
+    # Running methods in Threads
+    def createThread(self):
+        self.thread = Thread(target=self.loop)
+        self.thread.setDaemon(True)
+        self.thread.start()
+        print(self.thread)
+        print('createThread():', self.thread.isAlive())
 
     def loop(self):
         while True:
