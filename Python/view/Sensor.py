@@ -133,7 +133,7 @@ class Sensor:
             self.frequentieKnop.grid(column=2, row=1)
 
             # Knop om handmatig en automatisch om te wisselen
-            self.switchKnop = ttk.Button(self.knopContainer, width=28, text='Verander de instelling naar automatisch', command=self.switchFunc)
+            self.switchKnop = ttk.Button(self.knopContainer, text='Verander de instelling naar automatisch', command=self.switchFunc)
             self.switchKnop.grid(column=0, row=4, sticky='W', pady=10)
 
             # Knoppen om op te rollen of uit te rollen

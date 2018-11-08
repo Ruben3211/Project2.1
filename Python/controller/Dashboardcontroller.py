@@ -1,7 +1,5 @@
 from view.Dashboardview import Dashboardview
-from controller import *
-# from model import *
-
+from controller.meet_controller import meetController
 
 
 class Dashboardcontroller:
@@ -9,7 +7,7 @@ class Dashboardcontroller:
         self.master = master
         self.dashboard = Dashboardview(self.master)
 
-
+        self.meter = meetController()
 
     def get_temp_bovengrens(self):
         return self.dashboard.temperatuursensor.bovengrens

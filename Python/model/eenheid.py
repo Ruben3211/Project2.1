@@ -10,9 +10,6 @@ import serial
 import struct
 import time
 
-# from controller.Dashboardcontroller import Dashboardcontroller
-
-
 class eenheid:
     def __init__(self, id, naam, sensor_type, poort, meet_freq, grenswaarde):
         """
