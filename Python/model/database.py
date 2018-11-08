@@ -2,7 +2,7 @@ import mysql
 from mysql import connector
 
 class Database:
-    def select(self, query):
+    def select(self, query, parameters=()):
         """
         Functie waarmee SELECT statement kan worden uitgevoerd.
         :param query: De query die uitgevoerd moet worden.
@@ -11,7 +11,7 @@ class Database:
         cursor = self.sql.cursor()
 
         try:
-            cursor.execute(query)
+            cursor.execute(query, parameters)
         except (mysql.connector.errors.ProgrammingError) as e:
             print("SQL:", e)
 
