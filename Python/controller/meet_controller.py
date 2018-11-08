@@ -3,8 +3,8 @@ from time import sleep
 from view.Dashboardview import Dashboardview
 
 class meetController:
-    def __init__(self):
-
+    def __init__(self, master):
+        self.dashboard = Dashboardview(master)
         self.e = eenheidController()
         self.eenheden = self.e.haal_eenheden()
         self.loop()
@@ -40,7 +40,29 @@ class meetController:
         return self.grenswaarde
 
 
+    def ontvang_temp_bovengrens(self):
+        return self.dashboard.temperatuursensor.bovengrens
 
+    def ontvang_temp_frequentie(self):
+        return self.dashboard.temperatuursensor.frequentie
+
+    def ontvang_temp_switch(self):
+        return self.dashboard.temperatuursensor.switch
+
+    def ontvang_temp_oprollen(self):
+        return self.dashboard.temperatuursensor.oprollen
+
+    def ontvang_licht_bovengrens(self):
+        return self.dashboard.lichtsensor.bovengrens
+
+    def ontvang_licht_frequentie(self):
+        return self.dashboard.lichtsensor.frequentie
+
+    def ontvang_licht_switch(self):
+        return self.dashboard.lichtsensor.switch
+
+    def ontvang_licht_oprollen(self):
+        return self.dashboard.lichtsensor.oprollen
 
 
 # m = meetController()

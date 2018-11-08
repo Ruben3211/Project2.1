@@ -18,6 +18,6 @@ class main(Tk):
 
 
 run = main()
-grafiek1 = animation.FuncAnimation(run.controller.dashboard.temperatuursensor.grafiek.fig, run.controller.dashboard.temperatuursensor.grafiek.animate, interval=1000, blit=False)
-grafiek2 = animation.FuncAnimation(run.controller.dashboard.lichtsensor.grafiek.fig, run.controller.dashboard.lichtsensor.grafiek.animate, interval=1000, blit=False)
-run.controller.dashboard.win.mainloop()
+grafiek1 = animation.FuncAnimation(run.controller.meter.dashboard.temperatuursensor.grafiek.fig, run.controller.meter.dashboard.temperatuursensor.grafiek.animate, interval=1000, blit=False)
+grafiek2 = animation.FuncAnimation(run.controller.meter.dashboard.lichtsensor.grafiek.fig, run.controller.meter.dashboard.lichtsensor.grafiek.animate, interval=1000, blit=False)
+run.controller.meter.dashboard.win.mainloop()
