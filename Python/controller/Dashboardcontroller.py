@@ -1,6 +1,6 @@
 from view.Dashboardview import Dashboardview
 from controller import *
-from model import *
+# from model import *
 
 
 
@@ -11,8 +11,8 @@ class Dashboardcontroller:
 
 
 
-    # def get_temp_bovengrens(self):
-    #     return self.dashboard.temperatuursensor.bovengrens
+    def get_temp_bovengrens(self):
+        return self.dashboard.temperatuursensor.bovengrens
 
     def ga_naar_paneel(self):
         """

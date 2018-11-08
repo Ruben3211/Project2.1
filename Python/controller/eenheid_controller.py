@@ -1,4 +1,5 @@
-from model import *
+from model.database import Database
+from model.eenheid import eenheid
 
 class eenheidController:
     def __init__(self):
@@ -9,7 +10,9 @@ class eenheidController:
         resultaat = self.db.select("SELECT id, name, type, port, measure_freq, sensitivity FROM j_units")
         eenheden = []
         for a in resultaat:
-             eenheden.append(eenheid(a[0], a[1], a[2], a[3], a[4], a[5]))
+            eenheden.append(eenheid(a[0], a[1], a[2], a[3], a[4], a[5]))
+            for t in eenheden:
+                t.setup()
         return eenheden
 
     def nieuwe_eenheid(self, name, type, sensitivity, measure_freq, share_freq, manual, port):

@@ -10,6 +10,8 @@ import serial
 import struct
 import time
 
+# from controller.Dashboardcontroller import Dashboardcontroller
+
 
 class eenheid:
     def __init__(self, id, naam, sensor_type, poort, meet_freq, grenswaarde):
@@ -35,6 +37,7 @@ class eenheid:
         # self.datum = datum_toe
         self.sensor_waarde = 0
         self.mode = 0
+        self.waarde = 0
 
     # maakt de connectie aan voor de besturingseenheid
     def connect(self):
@@ -155,12 +158,12 @@ class eenheid:
             time.sleep(1)
 
         print("{} is gereed voor gebruik" .format(self.naam))
-        test.handmatig()
+       # self.handmatig()
 
 
 
 """
 :param eenheid: maakt een eenheid aan
 """
-test = eenheid(1, 'test', 0, 'com3', 2, 30)
-test.setup()
+
+# test = eenheid(1, 'test', 0, 'com3', 2, 30)
