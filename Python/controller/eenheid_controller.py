@@ -23,14 +23,3 @@ class eenheidController:
     def verwijder_eenheid(self, id):
         q = "DELETE FROM j_units WHERE id = '%s'"
         self.db.delete(q, (id,))
-
-
-# new = eenheidController()
-# for i in new.haal_eenheden():
-#     for j in i:
-#         print(j," ", end='')
-#     print("\n")
-
-# new.verwijder_eenheid(16)
-# new.nieuwe_eenheid(3,2,4,1,4,5,"HOI")
-
