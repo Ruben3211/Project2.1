@@ -4,14 +4,16 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import Menu
 
+
+
 import matplotlib
 matplotlib.use('TkAgg')
 
 # =======================================================================================
 class Dashboardview:
-    def __init__(self):
+    def __init__(self, master):
         # Maak object
-        self.win = tk.Tk()
+        self.win = master
 
         # Voeg een titel toe
         self.win.title("De Centrale")
@@ -61,8 +63,7 @@ class Dashboardview:
 # Start GUI
 # ======================
 
-oop = Dashboardview()
+# oop = Dashboardview()
 
-grafiek1 = animation.FuncAnimation(oop.temperatuursensor.grafiek.fig, oop.temperatuursensor.grafiek.animate, interval=1000, blit=False)
-grafiek2 = animation.FuncAnimation(oop.lichtsensor.grafiek.fig, oop.lichtsensor.grafiek.animate, interval=1000, blit=False)
-oop.win.mainloop()
+
+# oop.win.mainloop()
