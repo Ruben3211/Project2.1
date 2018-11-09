@@ -64,7 +64,7 @@ class eenheid:
         self.sensor_type = self.bit_to_int(self.sensor_type)
 
     # Haalt de sensor waarde op van de arduino via atmel
-    def ontvang_sensor_waarde(self):
+    def stuur_sensor_waarde(self):
         self.ser.write(struct.pack('>B', 255))
         self.ser.write(struct.pack('>B', 4))
         self.waarde = self.ser.readline(2)
@@ -106,7 +106,7 @@ class eenheid:
                 print(self.mode)
 
             elif nummer == 4:
-                self.ontvang_sensor_waarde()
+                self.stuur_sensor_waarde()
                 print(self.waarde)
 
             if self.mode == 1:
@@ -117,7 +117,7 @@ class eenheid:
     # Een functie voor het automatisch besturen van de besturingseenheid
     def automatisch(self):
         while True:
-            self.ontvang_sensor_waarde()
+            self.stuur_sensor_waarde()
             print(self.waarde)
 
             self.sluit_scherm()

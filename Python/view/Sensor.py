@@ -14,7 +14,7 @@ class Sensor:
             self.frequentie = _frequentie
             self.titel = _titel
             self.eenheid = _eenheid
-            self.switch = True
+            self.switch = False
             self.oprollen = True
             self.maakFrame()
 
@@ -52,13 +52,13 @@ class Sensor:
 
         # Oprol knop functionaliteit
         def oprollenFunc(self):
-            self.oprollen = True
+            self.oprollen = False
             self.oprollabelVar.set('De rolluik is nu opgerold')
 
             # Uitrol knop functionaliteit
 
         def uitrollenFunc(self):
-            self.oprollen = False
+            self.oprollen = True
             self.oprollabelVar.set('De rolluik is nu uitgerold')
 
         def maakFrame(self):

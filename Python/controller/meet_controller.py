@@ -19,11 +19,11 @@ class meetController:
 
     def ontvang_sensor_waarde(self):
         for t in self.eenheden:
-            t.ontvang_sensor_waarde()
+            t.stuur_sensor_waarde()
             #self.sla_waarde_op(t.waarde)
             return t.waarde
 
-    # Running methods in Threads
+    # Aparte thread voor de loop
     def createThread(self):
         self.thread = Thread(target=self.loop)
         self.thread.setDaemon(True)
@@ -35,6 +35,7 @@ class meetController:
         while True:
             self.ontvang_sensor_waarde()
             self.dashboard.temperatuursensor.grafiek.variabele = self.ontvang_sensor_waarde()
+            self.dashboard.lichtsensor.grafiek.variabele = self.ontvang_sensor_waarde()
             if self.ontvang_temp_switch() == True:
                 self.automatisch()
             else:
