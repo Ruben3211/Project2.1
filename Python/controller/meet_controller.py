@@ -20,7 +20,8 @@ class meetController:
     def ontvang_sensor_waarde(self):
         for t in self.eenheden:
             t.ontvang_sensor_waarde()
-            self.sla_waarde_op(t.waarde)
+            #self.sla_waarde_op(t.waarde)
+            return t.waarde
 
     # Running methods in Threads
     def createThread(self):
@@ -32,13 +33,13 @@ class meetController:
 
     def loop(self):
         while True:
-            # self.ontvang_sensor_waarde()
-            # self.ontvang_grenswaarde()
-            print(self.ontvang_licht_switch())
-            sleep(5)
-
-    def ontvang_grenswaarde(self):
-        print(Dashboardview.temperatuursensor.bovengrens)
+            self.ontvang_sensor_waarde()
+            self.dashboard.temperatuursensor.grafiek.variabele = self.ontvang_sensor_waarde()
+            if self.ontvang_temp_switch() == True:
+                self.automatisch()
+            else:
+                self.handmatig()
+            sleep(self.ontvang_temp_frequentie())
 
     def ontvang_temp_bovengrens(self):
         return self.dashboard.temperatuursensor.bovengrens
@@ -59,15 +60,29 @@ class meetController:
         return self.dashboard.lichtsensor.frequentie
 
     def ontvang_licht_switch(self):
-        self.mode = self.dashboard.lichtsensor.switch
-        if self.mode == True:
-            self.mode = 1
-        elif self.mode == False:
-            self.mode = 0
-        return self.mode
+        return self.dashboard.lichtsensor.switch
 
     def ontvang_licht_oprollen(self):
-        return self.dashboard.lichtsensor.oprollen
+            for t in self.eenheden:
+                if self.dashboard.lichtsensor.oprollen == True:
+                    t.open_scherm()
+                else:
+                    t.sluit_scherm()
+    #mode
+    def automatisch(self):
+        for t in self.eenheden:
+            if self.ontvang_sensor_waarde() > self.ontvang_temp_bovengrens():
+                t.open_scherm()
+            elif self.ontvang_sensor_waarde() <= self.ontvang_temp_bovengrens():
+                t.sluit_scherm()
+
+    #mode
+    def handmatig(self):
+        for t in self.eenheden:
+            if self.ontvang_temp_oprollen() == True:
+                t.open_scherm()
+            else:
+                t.sluit_scherm()
 
 
 # m = meetController()

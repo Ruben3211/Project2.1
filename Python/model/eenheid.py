@@ -49,19 +49,11 @@ class eenheid:
 
     # Open het scherm
     def open_scherm(self):
-        if self.mode == 0:
-            self.ser.write(struct.pack('>B', 255))
-            self.ser.write(struct.pack('>B', 1))
-        elif self.mode == 1 and self.waarde > self.grenswaarde:
             self.ser.write(struct.pack('>B', 255))
             self.ser.write(struct.pack('>B', 1))
 
     # Sluit het scherm
     def sluit_scherm(self):
-        if self.mode == 0:
-            self.ser.write(struct.pack('>B', 255))
-            self.ser.write(struct.pack('>B', 2))
-        elif self.mode == 1 and self.waarde <= self.grenswaarde:
             self.ser.write(struct.pack('>B', 255))
             self.ser.write(struct.pack('>B', 2))
 
