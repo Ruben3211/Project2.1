@@ -44,9 +44,9 @@ class eenheidController:
     :param manual: de mode van de eenheid.
     :param port: de poort waarop de eenheid is aangesloten. 
     """
-    def nieuwe_eenheid(self, name, type, sensitivity, measure_freq, manual, port):
-        q = "INSERT INTO j_units(name, type, sensitivity, measure_freq, share_freq, datetime_added, manual, port) VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP, %s, %s)"
-        p = (name, type, int(sensitivity), int(measure_freq), int(manual), port)
+    def nieuwe_eenheid(self, name, type, sensitivity, measure_freq, share_freq, manual, port):
+        q = "INSERT INTO j_units(name, type, sensitivity, measure_freq, share_freq, datetime_added, manual, port) VALUES (%s, %s, %s, %s, $s, CURRENT_TIMESTAMP, %s, %s)"
+        p = (name, type, int(sensitivity), int(measure_freq), int(share_freq), int(manual), port)
         self.db.insert(q, p)
 
     """

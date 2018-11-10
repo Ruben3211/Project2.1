@@ -36,20 +36,19 @@ class meetController:
 
     # Maakt een thread aan per eenheid
     def createThread(self):
-        self.thread = Thread(target=self.loop_temperatuursensor)
-        self.thread.setDaemon(True)
-        self.thread.start()
-        self.threadl = Thread(target=self.loop_lichtsensor)
-        self.threadl.setDaemon(True)
-        self.threadl.start()
+        self.threadtemp = Thread(target=self.loop_temperatuursensor)
+        self.threadtemp.setDaemon(True)
+        self.threadtemp.start()
+        self.threadlicht = Thread(target=self.loop_lichtsensor)
+        self.threadlicht.setDaemon(True)
+        self.threadlicht.start()
 
     # Een loop voor het programma voor de temperatuursensor
     def loop_temperatuursensor(self):
+        x = True
         unit2 = self.eenheden[1]
-        unit2.stuur_sensor_waarde()
-        self.dashboard.temperatuursensor.grafiek.variabele = unit2.waarde
         y = 0
-        while unit2:
+        while x:
             for i in range(0, 61):
                 print(y, "t")
                 if self.ontvang_temp_switch() == True:
@@ -60,16 +59,17 @@ class meetController:
                     unit2.stuur_sensor_waarde()
                     self.dashboard.temperatuursensor.grafiek.variabele = unit2.waarde
                     y = 0
-                sleep(1)
+                    sleep(1)
+                    continue
                 y += 1
+                sleep(1)
             self.sla_waarde_op()
 
     # Een loop voor het programma vam de lichtsensor
     def loop_lichtsensor(self):
+        x = True
         unit1 = self.eenheden[0]
-        unit1.stuur_sensor_waarde()
-        self.dashboard.lichtsensor.grafiek.variabele = unit1.waarde
-        while unit1:
+        while x:
             for i in range(0, self.ontvang_licht_frequentie()):
                 print(i, "l")
                 if self.ontvang_licht_switch() == True:
@@ -77,10 +77,13 @@ class meetController:
                 else:
                     self.handmatig()
                 if i == self.ontvang_licht_frequentie() - 1:
-
                     unit1.stuur_sensor_waarde()
                     self.dashboard.lichtsensor.grafiek.variabele = unit1.waarde
+                    sleep(1)
+                    continue
+                x = True
                 sleep(1)
+
 
     """
     Haalt de bovengrens waarde op van het dashboard van de temperatuursensor

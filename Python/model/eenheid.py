@@ -72,7 +72,7 @@ class eenheid:
     def setup(self):
         x = 0
         print(".")
-        time.sleep(1)
+        time.sleep(3)
         print("..")
         while x == 0:
             self.open_scherm()
