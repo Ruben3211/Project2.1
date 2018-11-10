@@ -10,11 +10,10 @@ class meetController:
         self.eenheden = self.e.haal_eenheden()
         self.createThread()
 
-    def sla_waarde_op(self, waarde):
-        self.waarde = waarde
-        q = "INSERT INTO j_values (value, datetime, unit_id) VALUES (%s, CURRENT_TIMESTAMP, %s)"
+    def sla_waarde_op(self):
         for t in self.eenheden:
-            p = (self.waarde, t.id)
+            q = "INSERT INTO j_values (value, datetime, unit_id) VALUES (%s, CURRENT_TIMESTAMP, %s)"
+            p = (t.waarde, t.id)
             self.e.db.insert(q, p)
 
     # def ontvang_sensor_waarde(self):
@@ -39,21 +38,31 @@ class meetController:
 
     def loop(self):
         unit2 = self.eenheden[1]
+        unit2.stuur_sensor_waarde()
+        self.dashboard.temperatuursensor.grafiek.variabele = unit2.waarde
+        y = 0
         while unit2:
-            for i in range(0, self.ontvang_temp_frequentie()):
+            for i in range(0, 61):
                 if self.ontvang_temp_switch() == True:
                     self.automatisch()
                 else:
                     self.handmatig()
                 print(i, self.ontvang_temp_frequentie() - 1, "temp")
-                if i == self.ontvang_temp_frequentie() - 1:
+                if y == self.ontvang_temp_frequentie() - 1:
+                    print("stuur naar grafiek")
                     unit2.stuur_sensor_waarde()
-                    #self.sla_waarde_op(unit2.waarde)
                     self.dashboard.temperatuursensor.grafiek.variabele = unit2.waarde
+                    y = 0
                 sleep(1)
+                y += 1
+            if unit2:
+                print("leef!")
+            self.sla_waarde_op()
 
     def loopl(self):
         unit1 = self.eenheden[0]
+        unit1.stuur_sensor_waarde()
+        self.dashboard.lichtsensor.grafiek.variabele = unit1.waarde
         while unit1:
             for i in range(0, self.ontvang_licht_frequentie()):
                 if self.ontvang_licht_switch() == True:
@@ -63,7 +72,6 @@ class meetController:
                 print(i, self.ontvang_licht_frequentie() - 1, "licht")
                 if i == self.ontvang_licht_frequentie() - 1:
                     unit1.stuur_sensor_waarde()
-                    #self.sla_waarde_op(unit1.waarde)
                     self.dashboard.lichtsensor.grafiek.variabele = unit1.waarde
                 sleep(1)
 

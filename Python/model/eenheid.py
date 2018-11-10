@@ -84,67 +84,19 @@ class eenheid:
         nummer = int(self.bit)
         return nummer
 
-    # Een functie voor het handmatig besturen van de eenheid
-    def handmatig(self):
-        while True:
-            nummer = int(input(">" or 4))
-
-            if nummer == 1:
-                if self.mode == 1:
-                    self.open_scherm()
-                else:
-                    self.open_scherm()
-
-            elif nummer == 2:
-                if self.mode == 1:
-                    self.sluit_scherm()
-                else:
-                    self.sluit_scherm()
-
-            elif nummer == 3:
-                self.verander_mode()
-                print(self.mode)
-
-            elif nummer == 4:
-                self.stuur_sensor_waarde()
-                print(self.waarde)
-
-            if self.mode == 1:
-                self.automatisch()
-            else:
-                self.handmatig()
-
-    # Een functie voor het automatisch besturen van de besturingseenheid
-    def automatisch(self):
-        while True:
-            self.stuur_sensor_waarde()
-            print(self.waarde)
-
-            self.sluit_scherm()
-            self.open_scherm()
-
-            # De volgende 3 regels moeten nog veranderd worden.
-            self.mode = int(input(">>") or self.mode)
-            self.meet_freq = int(input(">>>") or self.meet_freq)
-            self.grenswaarde = int(input(">>>>") or self.grenswaarde)
-
-            if self.mode == 0:
-                self.handmatig()
-            else:
-                self.automatisch()
-            time.sleep(self.meet_freq)
-
     # functie voor het opzetten van de connectie
     def setup(self):
+        x = 0
         print(".")
-        time.sleep(3)
+        time.sleep(1)
         print("..")
-        for x in range(1, 2):
+        while x == 0:
             self.open_scherm()
             time.sleep(1)
             print("...")
             self.sluit_scherm()
             time.sleep(1)
+            x += 1
 
         print("{} is gereed voor gebruik" .format(self.naam))
        # self.handmatig()
