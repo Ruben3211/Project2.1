@@ -4,7 +4,6 @@ import tkinter as tk
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import random
 
 
 class Lijngrafiek:

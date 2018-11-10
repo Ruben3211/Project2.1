@@ -10,6 +10,7 @@ import serial
 import struct
 import time
 
+
 class eenheid:
     def __init__(self, id, naam, sensor_type, poort, meet_freq, grenswaarde):
         """
@@ -31,7 +32,6 @@ class eenheid:
         self.ser = self.connect()
         self.grenswaarde = grenswaarde
         self.meet_freq = meet_freq
-        # self.datum = datum_toe
         self.sensor_waarde = 0
         self.mode = 0
         self.waarde = 0
@@ -99,12 +99,3 @@ class eenheid:
             x += 1
 
         print("{} is gereed voor gebruik" .format(self.naam))
-       # self.handmatig()
-
-
-
-"""
-:param eenheid: maakt een eenheid aan
-"""
-
-# test = eenheid(1, 'test', 0, 'com3', 2, 30)
