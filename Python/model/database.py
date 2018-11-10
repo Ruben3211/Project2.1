@@ -1,3 +1,11 @@
+"""
+In de klasse Database staat alle functionaliteit voor de database.
+
+Created: 05-11-2018
+Author: Jeloambo
+Version: 1.0
+"""
+
 import mysql
 from mysql import connector
 

@@ -1,23 +1,37 @@
-import tkinter as tk
-from tkinter import ttk
+"""
+In de klasse Sensor wordt de functionaliteit voor het venster toegevoegd per eenheid.
+Hierin worden alle knoppen, labels en views aangemaakt per venster.
 
-# from Temperatuurinfo import *
-# from temperatuurknoppen import *
+Created: 07-11-2018
+Author: Jeloambo
+Version: 1.0
+"""
+
+from tkinter import ttk
 from .Lijngrafiek import *
+
 
 class Sensor:
         def __init__(self, _frame, _soort, _bovengrens, _frequentie, _titel, _eenheid):
-            # Maak object
+            """
+            :initialiseren van all klas variabelen.
+            :param _frame: het tablad waarin de view moet worden gezet.
+            :param _soort: het type sensor op de eenheid.
+            :param _bovengrens: de bovengrens van de eenheid.
+            :param _frequentie: de meet frequentie van de eenheid.
+            :param _titel: de titel van het tablad.
+            :param _eenheid: de waarde waarin gemeten wordt.
+            """
             self.frame = _frame
             self.soort = _soort
             self.bovengrens = _bovengrens
             self.frequentie = _frequentie
             self.titel = _titel
             self.eenheid = _eenheid
-            self.switch = False
-            self.oprollen = True
-            self.maakFrame()
-            self.switchFunc()
+            self.switch = False # zet de automatisch/handmatig knop op False
+            self.oprollen = True # zet de knop voor oprollen/uitrollen op False
+            self.maakFrame() # maakt het frame
+            self.switchFunc() # voert de functionaliteit voor de automatisch/handmatig knop uit
 
         # Frequentie knop functionaliteit
         def frequentieFunc(self):
@@ -61,10 +75,8 @@ class Sensor:
             self.oprollen = True
             self.oprollabelVar.set('De rolluik is nu uitgerold')
 
+        # creert de containers in het frame
         def maakFrame(self):
-            # Creeer containers
-            # -----------------------------------------------------------------
-
             gegevensLabel = tk.Label(text=self.titel + "sensor gegevens", font=('calibri', 16, 'bold'), background='grey91')
             instellingenLabel = tk.Label(text="Instellingen", font=('calibri', 16, 'bold'), background='grey91')
             lijngrafiekLabel = tk.Label(text="Lijngrafiek", font=('calibri', 16, 'bold'), background='grey91')
@@ -84,9 +96,10 @@ class Sensor:
             self.knopContainer = ttk.LabelFrame(self.linksContainer, labelwidget=instellingenLabel)
             self.knopContainer.grid(column=0, row=1, padx=8, pady=100, sticky='N')
 
-            # -----------------------------------------------------------------
+            """
+            Labelcontainer
+            """
 
-            # Infocontainer ------------------------------------
             # Label voor de bovengrenswaarde
             self.grenslabelVar = tk.StringVar()
             self.grenslabelVar.set('De bovengrens is: ' + str(self.bovengrens) + str(self.eenheid))
@@ -107,7 +120,10 @@ class Sensor:
             self.oprollabelVar.set('De rolluik is nu opgerold')
             ttk.Label(self.infoContainer, textvariable=self.oprollabelVar).grid(column=0, row=4, sticky='W')
 
-            # Knopcontainer ------------------------------------
+            """
+            Knopcontainer
+            """
+
             # Label voor bovengrens knop
             ttk.Label(self.knopContainer, text="Geef een waarde voor de bovengrens in" + self.eenheid + ":").grid(column=0, row=0, sticky='W')
 

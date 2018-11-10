@@ -1,20 +1,30 @@
+"""
+In de klasse Dashboardview maakt een nieuwe master(tk) aan.
+Hierin worden vensters van de eenheden aangemaakt voor het dashboard.
+
+Created: 07-11-2018
+Author: Jeloambo
+Version: 1.0
+"""
+
 from .Temperatuursensor import *
 from .Lichtsensor import *
 from tkinter import ttk
 from tkinter import Menu
-
-
-
 import matplotlib
 matplotlib.use('TkAgg')
 
-# =======================================================================================
+
 class Dashboardview:
     def __init__(self, master):
-        # Maak object
-        self.win = master
+        """
+        :initialiseren van all klas variabelen
+        :param win: wordt de master aangemaakt(tk).
 
-        # Voeg een titel toe
+        win.title("De Centrale") zet de titel van het venster als De Centrale.
+        createWidgets() maakt de frames aan.
+        """
+        self.win = master
         self.win.title("De Centrale")
         self.createWidgets()
 
@@ -24,8 +34,8 @@ class Dashboardview:
         self.win.destroy()
         exit()
 
+    # Maakt alle vensters aan
     def createWidgets(self):
-        # Tab Control  ----------------------------------------------------------------
         tabControl = ttk.Notebook(self.win)  # Creeer tab control
 
         tab1 = ttk.Frame(tabControl)  # Creeer een tab
@@ -35,10 +45,11 @@ class Dashboardview:
         tabControl.add(tab2, text='Rolluik 2')  # Voeg de tweede tab toe
 
         tabControl.pack(expand=1, fill="both")  # Pack om zichtbaar te maken
-        # ~ Tab 1  --------------------------------------------------------------------
+
+        # Maakt een tab aan voor de temperatuursensor
         self.temperatuursensor = Temperatuursensor(tab1)
 
-        # Tab 2  ----------------------------------------------------------------------
+        # Maakt een tab aan voor de lichtsensor
         self.lichtsensor = Lichtsensor(tab2)
 
         # Creeer de menu bar
@@ -56,13 +67,3 @@ class Dashboardview:
         helpMenu = Menu(menuBar, tearoff=0)
         helpMenu.add_command(label="About")
         menuBar.add_cascade(label="Help", menu=helpMenu)
-
-
-# ======================
-# Start GUI
-# ======================
-
-# oop = Dashboardview()
-
-
-# oop.win.mainloop()

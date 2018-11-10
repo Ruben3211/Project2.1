@@ -23,7 +23,6 @@ class eenheid:
         :param grenswaarde: is de grenswaarde waarop de het scherm moet sluiten en openen
         :param meet_freq: meet frequentie voor het meten van de sensor waarden
         :param sensor_waarde: de waarde van de sensor
-        :param mode: is de mode van de eenheid. handmatig of automatisch
         """
         self.id = id
         self.naam = naam
@@ -33,16 +32,11 @@ class eenheid:
         self.grenswaarde = grenswaarde
         self.meet_freq = meet_freq
         self.sensor_waarde = 0
-        self.mode = 0
         self.waarde = 0
 
     # maakt de connectie aan voor de besturingseenheid
     def connect(self):
-        self.ser = serial.Serial(port=self.poort,
-                            baudrate=9600,
-                            bytesize=8,
-                            stopbits=2,
-                            xonxoff=True)
+        self.ser = serial.Serial(port=self.poort, baudrate=9600, bytesize=8, stopbits=2, xonxoff=True)
 
         print('verbonden met', self.naam)
         return self.ser
@@ -57,12 +51,6 @@ class eenheid:
             self.ser.write(struct.pack('>B', 255))
             self.ser.write(struct.pack('>B', 2))
 
-    def ontvang_sensor_type(self):
-        self.ser.write(struct.pack('>B', 255))
-        self.ser.write(struct.pack('>B', 3))
-        self.sensor_type = self.ser.readline(2)
-        self.sensor_type = self.bit_to_int(self.sensor_type)
-
     # Haalt de sensor waarde op van de arduino via atmel
     def stuur_sensor_waarde(self):
         self.ser.write(struct.pack('>B', 255))
@@ -70,15 +58,11 @@ class eenheid:
         self.waarde = self.ser.readline(2)
         self.waarde = self.bit_to_int(self.waarde)
 
-    # Veranderd de mode van de besturingseenheid van automatisch naar handmatig en andersom
-    def verander_mode(self):
-        if self.mode == 1:
-            self.mode = 0
-        elif self.mode == 0:
-            self.mode = 1
-        return self.mode
-
-    # Zet een bit om in een integer
+    """
+    Zet de waarde van bits om naar integers.
+    :param ont: de bits die omgezet moeten worden.
+    return: de integer waarde van de bits die worden meegegeven.
+    """
     def bit_to_int(self, ont):
         self.bit = ont
         nummer = int(self.bit)
