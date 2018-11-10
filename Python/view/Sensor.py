@@ -17,6 +17,7 @@ class Sensor:
             self.switch = False
             self.oprollen = True
             self.maakFrame()
+            self.switchFunc()
 
         # Frequentie knop functionaliteit
         def frequentieFunc(self):
@@ -55,8 +56,7 @@ class Sensor:
             self.oprollen = False
             self.oprollabelVar.set('De rolluik is nu opgerold')
 
-            # Uitrol knop functionaliteit
-
+        # Uitrol knop functionaliteit
         def uitrollenFunc(self):
             self.oprollen = True
             self.oprollabelVar.set('De rolluik is nu uitgerold')
@@ -99,7 +99,7 @@ class Sensor:
 
             # Label voor handmatig/automatisch switch
             self.switchlabelVar = tk.StringVar()
-            self.switchlabelVar.set('Deze besturingseenheid is ingesteld op handmatig')
+            self.switchlabelVar.set('Deze besturingseenheid is ingesteld op automatisch')
             ttk.Label(self.infoContainer, textvariable=self.switchlabelVar).grid(column=0, row=3, sticky='W')
 
             # Label om aan te geven of rolluik is opgerold of niet
@@ -133,14 +133,14 @@ class Sensor:
             self.frequentieKnop.grid(column=2, row=1)
 
             # Knop om handmatig en automatisch om te wisselen
-            self.switchKnop = ttk.Button(self.knopContainer, text='Verander de instelling naar automatisch', command=self.switchFunc)
+            self.switchKnop = ttk.Button(self.knopContainer, text='Verander de instelling naar handmatig', command=self.switchFunc)
             self.switchKnop.grid(column=0, row=4, sticky='W', pady=10)
 
             # Knoppen om op te rollen of uit te rollen
             self.oprolKnop = ttk.Button(self.knopContainer, text='Oprollen', command=self.oprollenFunc)
             self.uitrolKnop = ttk.Button(self.knopContainer, text='Uitrollen', command=self.uitrollenFunc)
-            self.oprolKnop.grid(column=0, row=5, sticky=tk.W, in_=self.knopContainer)
-            self.uitrolKnop.grid(column=0, row=6, sticky=tk.W, in_=self.knopContainer)
+            # self.oprolKnop.grid(column=0, row=5, sticky=tk.W, in_=self.knopContainer)
+            # self.uitrolKnop.grid(column=0, row=6, sticky=tk.W, in_=self.knopContainer)
 
             self.graphFrame = tk.Frame(self.graphContainer)
             self.graphFrame.grid(column=0, row=0)

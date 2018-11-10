@@ -11,8 +11,8 @@ class eenheidController:
         eenheden = []
         for a in resultaat:
             eenheden.append(eenheid(a[0], a[1], a[2], a[3], a[4], a[5]))
-            for t in eenheden:
-                t.setup()
+        for t in eenheden:
+            t.setup()
         return eenheden
 
     def nieuwe_eenheid(self, name, type, sensitivity, measure_freq, share_freq, manual, port):

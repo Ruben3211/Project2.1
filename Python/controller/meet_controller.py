@@ -17,30 +17,55 @@ class meetController:
             p = (self.waarde, t.id)
             self.e.db.insert(q, p)
 
-    def ontvang_sensor_waarde(self):
-        for t in self.eenheden:
-            t.stuur_sensor_waarde()
-            #self.sla_waarde_op(t.waarde)
-            return t.waarde
+    # def ontvang_sensor_waarde(self):
+    #     for t in self.eenheden:
+    #         if t.id == 1:
+    #             t.stuur_sensor_waarde()
+    #             return t.waarde
+    #         if t.id == 3:
+    #             t.stuur_sensor_waarde()
+    #             return t.waarde
+
+
 
     # Aparte thread voor de loop
     def createThread(self):
         self.thread = Thread(target=self.loop)
         self.thread.setDaemon(True)
         self.thread.start()
-        print(self.thread)
-        print('createThread():', self.thread.isAlive())
+        self.threadl = Thread(target=self.loopl)
+        self.threadl.setDaemon(True)
+        self.threadl.start()
 
     def loop(self):
-        while True:
-            self.ontvang_sensor_waarde()
-            self.dashboard.temperatuursensor.grafiek.variabele = self.ontvang_sensor_waarde()
-            self.dashboard.lichtsensor.grafiek.variabele = self.ontvang_sensor_waarde()
-            if self.ontvang_temp_switch() == True:
-                self.automatisch()
-            else:
-                self.handmatig()
-            sleep(self.ontvang_temp_frequentie())
+        unit2 = self.eenheden[1]
+        while unit2:
+            for i in range(0, self.ontvang_temp_frequentie()):
+                if self.ontvang_temp_switch() == True:
+                    self.automatisch()
+                else:
+                    self.handmatig()
+                print(i, self.ontvang_temp_frequentie() - 1, "temp")
+                if i == self.ontvang_temp_frequentie() - 1:
+                    unit2.stuur_sensor_waarde()
+                    #self.sla_waarde_op(unit2.waarde)
+                    self.dashboard.temperatuursensor.grafiek.variabele = unit2.waarde
+                sleep(1)
+
+    def loopl(self):
+        unit1 = self.eenheden[0]
+        while unit1:
+            for i in range(0, self.ontvang_licht_frequentie()):
+                if self.ontvang_licht_switch() == True:
+                    self.automatisch()
+                else:
+                    self.handmatig()
+                print(i, self.ontvang_licht_frequentie() - 1, "licht")
+                if i == self.ontvang_licht_frequentie() - 1:
+                    unit1.stuur_sensor_waarde()
+                    #self.sla_waarde_op(unit1.waarde)
+                    self.dashboard.lichtsensor.grafiek.variabele = unit1.waarde
+                sleep(1)
 
     def ontvang_temp_bovengrens(self):
         return self.dashboard.temperatuursensor.bovengrens
@@ -64,27 +89,44 @@ class meetController:
         return self.dashboard.lichtsensor.switch
 
     def ontvang_licht_oprollen(self):
-            for t in self.eenheden:
-                if self.dashboard.lichtsensor.oprollen == True:
-                    t.open_scherm()
-                else:
-                    t.sluit_scherm()
+        return self.dashboard.lichtsensor.oprollen
+
     #mode
     def automatisch(self):
-        for t in self.eenheden:
-            if self.ontvang_sensor_waarde() > self.ontvang_temp_bovengrens():
-                t.open_scherm()
-            elif self.ontvang_sensor_waarde() <= self.ontvang_temp_bovengrens():
-                t.sluit_scherm()
+        unit1 = self.eenheden[0]
+        unit2 = self.eenheden[1]
+        if self.ontvang_licht_switch() == True:
+            if unit1.waarde > self.ontvang_licht_bovengrens():
+                unit1.open_scherm()
+                self.dashboard.lichtsensor.uitrollenFunc()
+            elif unit1.waarde <= self.ontvang_licht_bovengrens():
+                unit1.sluit_scherm()
+                self.dashboard.lichtsensor.oprollenFunc()
+
+        if self.ontvang_temp_switch() == True:
+            if unit2.waarde > self.ontvang_temp_bovengrens():
+                unit2.open_scherm()
+                self.dashboard.temperatuursensor.uitrollenFunc()
+            elif unit2.waarde <= self.ontvang_temp_bovengrens():
+                unit2.sluit_scherm()
+                self.dashboard.temperatuursensor.oprollenFunc()
 
     #mode
     def handmatig(self):
-        for t in self.eenheden:
-            if self.ontvang_temp_oprollen() == True:
-                t.open_scherm()
-            else:
-                t.sluit_scherm()
+        unit1 = self.eenheden[0]
+        unit2 = self.eenheden[1]
 
+        if self.ontvang_licht_switch() == False:
+            if self.ontvang_licht_oprollen() == True:
+                unit1.open_scherm()
+            else:
+                unit1.sluit_scherm()
+
+        if self.ontvang_temp_switch() == False:
+            if self.ontvang_temp_oprollen() == True:
+                unit2.open_scherm()
+            else:
+                unit2.sluit_scherm()
 
 # m = meetController()
 # m.sla_waarde_op()

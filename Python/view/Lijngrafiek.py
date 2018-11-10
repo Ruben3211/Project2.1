@@ -14,12 +14,12 @@ class Lijngrafiek:
         self.xar = []
         self.yar = []
 
-        self.variabele = 0
+        self.variabele = None
 
         self.fig = plt.figure(figsize=(14, 4.5), dpi=100)
 
         self.ax = self.fig.add_subplot(1,1,1)
-        self.ax.set_ylim(0, 80)
+        self.ax.set_ylim(0, 70)
         self.ax.grid()
         self.line, = self.ax.plot(self.xar, self.yar)
 
@@ -37,9 +37,3 @@ class Lijngrafiek:
             self.ax.set_xlim(0, i+10)
         else:
             self.ax.set_xlim(i - 69, i + 10)
-
-
-# root = tk.Tk()
-# app = Lijngrafiek(root)
-# ani = animation.FuncAnimation(app.fig, app.animate, interval=100, blit=False)
-# root.mainloop()
