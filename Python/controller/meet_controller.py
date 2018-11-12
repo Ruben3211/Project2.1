@@ -60,7 +60,6 @@ class meetController:
                     self.dashboard.temperatuursensor.grafiek.variabele = unit2.waarde
                     y = 0
                     sleep(1)
-                    continue
                 y += 1
                 sleep(1)
             self.sla_waarde_op()
@@ -80,7 +79,6 @@ class meetController:
                     unit1.stuur_sensor_waarde()
                     self.dashboard.lichtsensor.grafiek.variabele = unit1.waarde
                     sleep(1)
-                    continue
                 x = True
                 sleep(1)
 

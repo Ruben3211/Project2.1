@@ -21,4 +21,4 @@ class Temperatuursensor(Sensor):
         :param _titel: de titel van het venster.
         :param _eenheid: de waarde waarin gemeten wordt.
         """
-        super().__init__(tab, _soort='temperatuur', _bovengrens=20, _frequentie=5, _titel='Temperatuur', _eenheid=' graden celsius')
+        super().__init__(tab, _soort='temperatuur', _bovengrens=25, _frequentie=5, _titel='Temperatuur', _eenheid=' graden celsius')
