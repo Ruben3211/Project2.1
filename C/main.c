@@ -153,8 +153,6 @@ int USART_Receive()
 
 // rolluik.c
 //int count = 0;
-int status_roluik;
-int roluik_bezig;
 
 void setRoluikStatus(){
 	roluik_bezig = 0; // als de roluik niet bezig is moet deze nul zijn anders 1
@@ -281,7 +279,7 @@ void lees_waarde(){
 }
 
 
-// Zet hier alles wat geïnitialiseerd moet worden.
+// Zet hier alles wat geÃ¯nitialiseerd moet worden.
 void setup(){	
 	
 	set_PortB();
